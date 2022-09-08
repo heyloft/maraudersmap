@@ -13,7 +13,7 @@ A magical map for experiences
 ### Start app on phone:
 1. Download Expo Go on your phone. Available for both Android and IOS. 
 2. **Android:**
-On your Android device, press "Scan QR Code" on the Expo Go app and scan the QR code you see in the terminal or in Expo Dev Tools. 
+On your Android device, press "Scan QR Code" on the Expo Go app and scan the QR code you see in the terminal or in Expo Dev Tools. \
 **IOS:**
 On your iPhone or iPad, open the default Apple "Camera" app and scan the QR code you see in the terminal or in Expo Dev Tools.
 
