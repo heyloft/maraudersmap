@@ -1,14 +1,14 @@
-import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
-import Test from "./src/components/test/Test";
+import Map from "./src/components/Map";
 import LocationExample from "./src/location/LocationExample";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Test />
+      <View style={styles.mapContainer}>
+        <Map />
+      </View>
       <LocationExample />
-      <StatusBar style="auto" />
     </View>
   );
 }
@@ -19,5 +19,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  mapContainer: {
+    width: "100%",
+    height: "100%",
   },
 });

@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
-import * as Location from 'expo-location';
+import React, { useState, useEffect } from "react";
+import { Text, View } from "react-native";
+import * as Location from "expo-location";
 
 type PositionData = {
   timestamp: number;
-  position : {
+  position: {
     latitude: number;
     longitude: number;
   };
-}
-
+};
 
 export default function LocationExample() {
   const [position, setPosition] = useState<PositionData | null>(null);
@@ -18,8 +17,8 @@ export default function LocationExample() {
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
         return;
       }
 
@@ -28,14 +27,14 @@ export default function LocationExample() {
         timestamp: location.timestamp,
         position: {
           latitude: location.coords.latitude,
-          longitude: location.coords.longitude
-        }
-      }; 
+          longitude: location.coords.longitude,
+        },
+      };
       setPosition(position);
     })();
   }, []);
 
-  let text = 'Waiting..';
+  let text = "Waiting..";
   if (errorMsg) {
     text = errorMsg;
   } else if (position) {
