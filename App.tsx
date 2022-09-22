@@ -1,15 +1,18 @@
 import { StyleSheet, View } from "react-native";
 import Map from "./src/components/Map";
 import LocationExample from "./src/location/LocationExample";
+import { RecoilRoot } from "recoil";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <View style={styles.mapContainer}>
-        <Map />
+    <RecoilRoot>
+      <View style={styles.container}>
+        <View style={styles.mapContainer}>
+          <Map />
+        </View>
+        <LocationExample />
       </View>
-      <LocationExample />
-    </View>
+    </RecoilRoot>
   );
 }
 
