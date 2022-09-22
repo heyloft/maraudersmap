@@ -21,6 +21,8 @@ const Map = () => {
       }}
       maxZoomLevel={MAX_ZOOM_LEVEL}
       minZoomLevel={MIN_ZOOM_LEVEL}
+      showsUserLocation={true}
+      followsUserLocation={true}
     >
       <UrlTile
         /**
