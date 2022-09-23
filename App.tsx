@@ -2,9 +2,24 @@ import { StyleSheet, View, Text } from "react-native";
 import { useEffect, useState } from "react";
 import Map from "./src/components/Map";
 import * as Location from "expo-location";
+import { distance } from "./src/location/locationUtils";
+
+const DIGS: Location.LocationObjectCoords = {
+  latitude: 63.43133846620186,
+  longitude: 10.400746365666315,
+  altitude: null,
+  accuracy: null,
+  altitudeAccuracy: null,
+  heading: null,
+  speed: null,
+};
 
 const onPositionChange = (newLocation: Location.LocationObject) => {
-  console.log(newLocation);
+  const dist = distance(DIGS, newLocation.coords);
+  console.log(dist);
+  if (dist < 10) {
+    console.log("You have entered DIGS");
+  }
 };
 
 export default function App() {
