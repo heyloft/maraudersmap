@@ -13,6 +13,7 @@
     "eslint-config-prettier": "^8.5.0",
     "expo": "~46.0.9",
     "expo-location": "~14.3.0",
+    "expo-notifications": "~0.16.1",
     "expo-status-bar": "~1.4.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
