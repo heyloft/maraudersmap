@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 import MapView, { MAP_TYPES, UrlTile } from "react-native-maps";
+import { useRecoilState } from "recoil";
 import {
   watchPositionAsync,
   Accuracy,
@@ -9,6 +10,7 @@ import {
   LocationObjectCoords,
 } from "expo-location";
 import { distance } from "../location/locationUtils";
+import { currentLocation } from "../recoil/atom";
 
 // @ts-ignore
 import { TILE_URL_TEMPLATE } from "@env";
@@ -23,13 +25,15 @@ const DIGS: LocationObjectCoords = {
   speed: null,
 };
 
-const onPositionChange = (new_location: LocationObject) => {
-  console.log(distance(DIGS, new_location.coords));
-};
-
 const Map = () => {
   const MIN_ZOOM_LEVEL = 17;
   const MAX_ZOOM_LEVEL = 21;
+  const [location, setLocation] = useRecoilState(currentLocation);
+
+  const onPositionChange = (new_location: LocationObject) => {
+    setLocation(new_location);
+    console.log(`Distance to Digs: ${distance(DIGS, new_location.coords)} m`);
+  };
 
   useEffect(() => {
     watchPositionAsync(
