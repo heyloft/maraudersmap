@@ -1,13 +1,42 @@
 import React from "react";
+import { useEffect } from "react";
 import { Platform } from "react-native";
 import MapView, { MAP_TYPES, UrlTile } from "react-native-maps";
+import {
+  watchPositionAsync,
+  Accuracy,
+  LocationObject,
+  LocationObjectCoords,
+} from "expo-location";
+import { distance } from "../location/locationUtils";
 
 // @ts-ignore
 import { TILE_URL_TEMPLATE } from "@env";
 
+const DIGS: LocationObjectCoords = {
+  latitude: 63.43133846620186,
+  longitude: 10.400746365666315,
+  altitude: null,
+  accuracy: null,
+  altitudeAccuracy: null,
+  heading: null,
+  speed: null,
+};
+
+const onPositionChange = (new_location: LocationObject) => {
+  console.log(distance(DIGS, new_location.coords));
+};
+
 const Map = () => {
   const MIN_ZOOM_LEVEL = 17;
   const MAX_ZOOM_LEVEL = 21;
+
+  useEffect(() => {
+    watchPositionAsync(
+      { accuracy: Accuracy.Highest, distanceInterval: 2 }, //TODO: Check out best locationOptions: https://docs.expo.dev/versions/latest/sdk/location/#locationoptions
+      onPositionChange
+    );
+  }, []);
 
   return (
     <MapView
@@ -22,7 +51,7 @@ const Map = () => {
       maxZoomLevel={MAX_ZOOM_LEVEL}
       minZoomLevel={MIN_ZOOM_LEVEL}
       showsUserLocation={true}
-      followsUserLocation={true}
+      followsUserLocation={false}
     >
       <UrlTile
         /**
