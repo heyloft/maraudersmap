@@ -1,14 +1,43 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
+import { useEffect, useState } from "react";
 import Map from "./src/components/Map";
-import LocationExample from "./src/location/LocationExample";
+import * as Location from "expo-location";
+
+const onPositionChange = (newLocation: Location.LocationObject) => {
+  console.log(newLocation);
+};
 
 export default function App() {
+  const [locationGranted, setLocationGranted] = useState<boolean>(false);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === "granted") {
+        setLocationGranted(true);
+        Location.watchPositionAsync(
+          { accuracy: Location.Accuracy.Highest, distanceInterval: 2 }, //TODO: Check out best locationOptions: https://docs.expo.dev/versions/latest/sdk/location/#locationoptions
+          onPositionChange
+        );
+      }
+    })();
+  }, []);
+
+  if (!locationGranted) {
+    return (
+      <View style={styles.container}>
+        <Text>
+          The app needs access to device location in order to work properly.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.mapContainer}>
         <Map />
       </View>
-      <LocationExample />
     </View>
   );
 }
