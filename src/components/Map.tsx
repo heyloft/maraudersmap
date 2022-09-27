@@ -9,7 +9,7 @@ import {
   LocationObject,
   LocationObjectCoords,
 } from "expo-location";
-import { distance } from "../location/locationUtils";
+import { distance } from "../location/location";
 import { currentLocation } from "../recoil/atom";
 
 // @ts-ignore
