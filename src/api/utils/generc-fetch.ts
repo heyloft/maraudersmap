@@ -1,3 +1,4 @@
+// @ts-ignore
 import { BASE_URL } from "@env";
 
 const genericFetch = async (endpoint: string) => {
