@@ -19,6 +19,11 @@ yarn install
 ```
 yarn start
 ```
+> If you get an error that looks like this
+> ```
+> ApiV2Error: Entity Not Authorized.
+> ```
+> This is most likely caused by being logged in with an expo user that is not part of the organization set as `owner` in [`app.json`](app.json). A simple solution is to log out (`expo logout`) before starting Expo Dev Tools.
 
 ### 2. Start app on phone
 1. Download `Expo Go` on your phone. Available for both Android and IOS. 
