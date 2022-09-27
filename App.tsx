@@ -6,27 +6,6 @@ import LocationExample from "./src/location/LocationExample";
 import { RecoilRoot } from "recoil";
 
 export default function App() {
-  const [locationGranted, setLocationGranted] = useState<boolean>(false);
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        setLocationGranted(true);
-      }
-    })();
-  }, []);
-
-  if (!locationGranted) {
-    return (
-      <View style={styles.container}>
-        <Text>
-          The app needs access to device location in order to work properly.
-        </Text>
-      </View>
-    );
-  }
-
   return (
     <RecoilRoot>
       <View style={styles.container}>

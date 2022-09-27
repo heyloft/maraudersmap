@@ -9,7 +9,7 @@ import {
   LocationObject,
   LocationObjectCoords,
 } from "expo-location";
-import { distance } from "../location/location";
+import { distance, locationSetup } from "../location/location";
 import { currentLocation } from "../recoil/atom";
 
 // @ts-ignore
@@ -36,10 +36,7 @@ const Map = () => {
   };
 
   useEffect(() => {
-    watchPositionAsync(
-      { accuracy: Accuracy.Highest, distanceInterval: 2 }, //TODO: Check out best locationOptions: https://docs.expo.dev/versions/latest/sdk/location/#locationoptions
-      onPositionChange
-    );
+    locationSetup(onPositionChange);
   }, []);
 
   return (
