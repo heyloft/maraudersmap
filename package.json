@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "prepare": "husky install .husky",
-    "codegen": "openapi --input http://127.0.0.1:8000/openapi.json --output ./src/client --client axios"
+    "codegen": "openapi --input http://127.0.0.1:8000/openapi.json --output ./src/client --client fetch"
   },
   "dependencies": {
     "eslint-config-prettier": "^8.5.0",
