@@ -1,8 +1,11 @@
 {
   "expo": {
     "name": "maraudersmap",
+    "description": "A magical map for experiences",
     "slug": "maraudersmap",
+    "owner": "heyloft-dev",
     "version": "1.0.0",
+    "githubUrl": "https://github.com/heyloft/maraudersmap",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -14,7 +17,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
