@@ -40,7 +40,7 @@ export const locationSetup = async (
 ) => {
   const { status } = await requestForegroundPermissionsAsync();
   if (status !== "granted") {
-    alert("Application wont work as intendet without LocationPermissions.");
+    alert("Application wont work as intended without LocationPermissions.");
     return;
   }
   watchPositionAsync(
