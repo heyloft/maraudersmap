@@ -12,7 +12,7 @@ web-build/
 
 .env
 
+client/
+
 # macOS
 .DS_Store
-
-client/
