@@ -1,11 +1,14 @@
-import { StyleSheet, View, Text } from "react-native";
-import { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { useEffect } from "react";
 import Map from "./src/components/Map";
-import * as Location from "expo-location";
-import LocationExample from "./src/location/LocationExample";
 import { RecoilRoot } from "recoil";
+import { notificationSetup } from "./src/notifications/notifications";
 
 export default function App() {
+  useEffect(() => {
+    notificationSetup();
+  }, []);
+
   return (
     <RecoilRoot>
       <View style={styles.container}>
