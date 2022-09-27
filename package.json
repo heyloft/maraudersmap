@@ -13,6 +13,7 @@
     "eslint-config-prettier": "^8.5.0",
     "expo": "~46.0.9",
     "expo-location": "~14.3.0",
+    "expo-notifications": "~0.16.1",
     "expo-status-bar": "~1.4.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
@@ -22,7 +23,8 @@
     "react-native": "0.69.5",
     "react-native-dotenv": "^3.3.1",
     "react-native-maps": "0.31.1",
-    "react-native-web": "~0.18.7"
+    "react-native-web": "~0.18.7",
+    "recoil": "^0.7.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
