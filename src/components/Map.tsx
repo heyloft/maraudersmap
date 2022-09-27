@@ -4,8 +4,13 @@ import MapView, { MAP_TYPES, UrlTile } from "react-native-maps";
 
 // @ts-ignore
 import { TILE_URL_TEMPLATE } from "@env";
+import { useQuery } from "react-query";
+import fetchItems from "../api/fetch-items";
 
 const Map = () => {
+  const { data, isLoading, error } = useQuery("items", fetchItems);
+  console.log(data);
+
   const MIN_ZOOM_LEVEL = 17;
   const MAX_ZOOM_LEVEL = 21;
 
