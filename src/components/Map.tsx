@@ -3,12 +3,7 @@ import { useEffect } from "react";
 import { Platform } from "react-native";
 import MapView, { MAP_TYPES, UrlTile } from "react-native-maps";
 import { useRecoilState } from "recoil";
-import {
-  watchPositionAsync,
-  Accuracy,
-  LocationObject,
-  LocationObjectCoords,
-} from "expo-location";
+import { LocationObject, LocationObjectCoords } from "expo-location";
 import { distance, locationSetup } from "../location/location";
 import { currentLocation } from "../recoil/atom";
 

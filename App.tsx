@@ -1,8 +1,5 @@
-import { StyleSheet, View, Text } from "react-native";
-import { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
 import Map from "./src/components/Map";
-import * as Location from "expo-location";
-import LocationExample from "./src/location/LocationExample";
 import { RecoilRoot } from "recoil";
 
 export default function App() {
