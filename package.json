@@ -22,7 +22,8 @@
     "react-native": "0.69.5",
     "react-native-dotenv": "^3.3.1",
     "react-native-maps": "0.31.1",
-    "react-native-web": "~0.18.7"
+    "react-native-web": "~0.18.7",
+    "react-query": "^3.39.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
