@@ -8,9 +8,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "prepare": "husky install .husky",
-    "codegen": "openapi --input http://127.0.0.1:8000/openapi.json --output ./src/client --client fetch"
+    "codegen": "dotenv -- bash -c 'openapi --input $URL_CODEGEN --output ./src/client --client fetch'"
   },
   "dependencies": {
+    "dotenv-cli": "^6.0.0",
     "eslint-config-prettier": "^8.5.0",
     "expo": "~46.0.9",
     "expo-location": "~14.3.0",
