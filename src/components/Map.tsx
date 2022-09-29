@@ -6,7 +6,7 @@ import { useRecoilState } from "recoil";
 import { LocationObject, LocationObjectCoords } from "expo-location";
 import { distance, locationSetup } from "../location/location";
 import { currentLocation } from "../recoil/atom";
-import { TILE_URL_TEMPLATE } from "react-native-dotenv";
+import { TILE_URL_TEMPLATE } from "@env";
 
 const DIGS: LocationObjectCoords = {
   latitude: 63.43133846620186,
