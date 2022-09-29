@@ -1,12 +1,7 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { RootStackParamList } from "../../App";
 
-const ScannerScreen = ({
-  route,
-  navigation,
-}: NativeStackScreenProps<RootStackParamList, "Scanner">) => {
+const ScannerScreen = () => {
   return (
     <View style={styles.container}>
       <Text>🤖</Text>

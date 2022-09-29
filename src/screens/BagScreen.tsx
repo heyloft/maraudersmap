@@ -1,12 +1,7 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { View, Text, StyleSheet, SectionList } from "react-native";
-import { RootStackParamList } from "../../App";
 
-const BagScreen = ({
-  route,
-  navigation,
-}: NativeStackScreenProps<RootStackParamList, "Bag">) => {
+const BagScreen = () => {
   const DATA = [
     {
       title: "Collectibles",

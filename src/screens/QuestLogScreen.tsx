@@ -1,12 +1,7 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { View, Text, StyleSheet, SectionList } from "react-native";
-import { RootStackParamList } from "../../App";
 
-const QuestLogScreen = ({}: NativeStackScreenProps<
-  RootStackParamList,
-  "QuestLog"
->) => {
+const QuestLogScreen = () => {
   const DATA = [
     {
       title: "Available Quests",
