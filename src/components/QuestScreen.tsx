@@ -3,6 +3,7 @@ import { ScrollView, Text, StyleSheet } from "react-native";
 import { List, Divider } from "react-native-paper";
 
 interface Quest {
+  // TODO: Replace with proper Quest interface.
   title: string;
   date: Date;
   questItems: QuestItem[];
@@ -11,12 +12,13 @@ interface Quest {
 }
 
 export interface QuestItem {
+  // TODO: Replace with proper interface.
   title: string;
   description: string;
   steps: [string, boolean][]; // Array of tuples where each tuple is [description, completed].
 }
 
-// Some hardcoded questitems:
+// Some hardcoded questitems. Can be used for testing.
 const hiddenKey: QuestItem = {
   title: "Hidden Key",
   description: "To enter you have to find the hidden key.",
@@ -46,19 +48,19 @@ const questItem3: QuestItem = {
 };
 
 /**
- * Checks the progress of a questitem by how many steps are completed.
- * @param item
- * @returns A fraction with steps completed.
+ * Check the progress of a QuestItem by calculationg the fraction completed steps / total steps.
+ * @param item - The QuestItem you want th check progress of.
+ * @returns A stringified fraction with steps completed / total steps.
  */
 const stepsCompleted = (item: QuestItem) => {
-  const total_steps = item.steps.length;
+  const totalSteps = item.steps.length;
   let completedCount = 0;
   for (let index = 0; index < item.steps.length; index++) {
     if (item.steps[index][1] == true) {
       completedCount++;
     }
   }
-  return `${completedCount}/${total_steps}`;
+  return `${completedCount}/${totalSteps}`;
 };
 
 const QuestScreen = (props: Quest) => {
