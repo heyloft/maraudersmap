@@ -39,10 +39,10 @@ const Map = () => {
       mapType={Platform.select({ android: MAP_TYPES.NONE })}
       style={{ width: "100%", height: "100%" }}
       initialRegion={{
-        latitude: 63.43141145560202,
-        longitude: 10.40077912763459,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitude: 63.431443926635886,
+        longitude: 10.400979180092996,
+        latitudeDelta: 0.0008,
+        longitudeDelta: 0.0008,
       }}
       maxZoomLevel={MAX_ZOOM_LEVEL}
       minZoomLevel={MIN_ZOOM_LEVEL}
