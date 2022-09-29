@@ -9,11 +9,11 @@ import fetchItems from "../api/fetch-items";
 import { Item } from "../client";
 
 const Map = () => {
-  const { data, isLoading, error } = useQuery<Item[], Error>(
-    "items",
-    fetchItems
-  );
-  console.log(data);
+  // Ecample request using react query
+  // const { data, isLoading, error } = useQuery<Item[], Error>(
+  //   "items",
+  //   fetchItems
+  // );
 
   const MIN_ZOOM_LEVEL = 17;
   const MAX_ZOOM_LEVEL = 21;
