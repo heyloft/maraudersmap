@@ -4,9 +4,6 @@ import MapView, { MAP_TYPES, UrlTile } from "react-native-maps";
 
 // @ts-ignore
 import { TILE_URL_TEMPLATE } from "@env";
-import { useQuery } from "react-query";
-import fetchItems from "../api/fetch-items";
-import { Item } from "../client";
 
 const Map = () => {
   // Ecample request using react query
