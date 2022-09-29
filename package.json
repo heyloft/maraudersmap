@@ -23,6 +23,7 @@
     "react-native": "0.69.5",
     "react-native-dotenv": "^3.3.1",
     "react-native-maps": "0.31.1",
+    "react-native-paper": "^4.12.4",
     "react-native-web": "~0.18.7",
     "recoil": "^0.7.5"
   },
