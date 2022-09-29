@@ -6,8 +6,6 @@ import { useRecoilState } from "recoil";
 import { LocationObject, LocationObjectCoords } from "expo-location";
 import { distance, locationSetup } from "../location/location";
 import { currentLocation } from "../recoil/atom";
-
-// @ts-ignore
 import { TILE_URL_TEMPLATE } from "@env";
 
 const DIGS: LocationObjectCoords = {
@@ -23,7 +21,7 @@ const DIGS: LocationObjectCoords = {
 const Map = () => {
   const MIN_ZOOM_LEVEL = 17;
   const MAX_ZOOM_LEVEL = 21;
-  const [location, setLocation] = useRecoilState(currentLocation);
+  const [location, setLocation] = useRecoilState(currentLocation); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const onPositionChange = (new_location: LocationObject) => {
     setLocation(new_location);

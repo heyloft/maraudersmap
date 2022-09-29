@@ -9,11 +9,12 @@ import { faMap } from "@fortawesome/free-solid-svg-icons/faMap";
 import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons/faCircleQuestion";
 import { faQrcode } from "@fortawesome/free-solid-svg-icons/faQrcode";
 import { faBriefcase } from "@fortawesome/free-solid-svg-icons/faBriefcase";
-import { RecoilRoot } from "recoil";
 import ScannerScreen from "./src/screens/ScannerScreen";
+import { useEffect } from "react";
+import { RecoilRoot } from "recoil";
+import { notificationSetup } from "./src/notifications/notifications";
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
-
 export type RootStackParamList = {
   Map: undefined;
   Scanner: undefined;
@@ -22,6 +23,10 @@ export type RootStackParamList = {
 };
 
 export default function App() {
+  useEffect(() => {
+    notificationSetup();
+  }, []);
+
   return (
     <RecoilRoot>
       <NavigationContainer>
