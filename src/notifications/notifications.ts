@@ -54,6 +54,6 @@ export const sendNotification = async (title: string, body: string) => {
       title: title,
       body: body,
     },
-    trigger: null, // null = schedule for deliveriy immediately.
+    trigger: null, // null = schedule for delivery immediately.
   });
 };
