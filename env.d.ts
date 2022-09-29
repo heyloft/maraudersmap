@@ -1,3 +1,3 @@
-declare module "react-native-dotenv" {
+declare module "@env" {
   export const TILE_URL_TEMPLATE: string;
 }
