@@ -13,6 +13,7 @@ import ScannerScreen from "./src/screens/ScannerScreen";
 import { useEffect } from "react";
 import { RecoilRoot } from "recoil";
 import { notificationSetup } from "./src/notifications/notifications";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 export type RootStackParamList = {
@@ -22,6 +23,8 @@ export type RootStackParamList = {
   Bag: undefined;
 };
 
+const queryClient = new QueryClient();
+
 export default function App() {
   useEffect(() => {
     notificationSetup();
@@ -29,55 +32,57 @@ export default function App() {
 
   return (
     <RecoilRoot>
-      <NavigationContainer>
-        <Tab.Navigator>
-          <Tab.Screen
-            name="Map"
-            component={MapScreen}
-            options={{
-              title: "Map",
-              tabBarIcon: ({ color, size }) => (
-                <FontAwesomeIcon icon={faMap} color={color} size={size} />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="QuestLog"
-            component={QuestLogScreen}
-            options={{
-              title: "Quests",
-              tabBarIcon: ({ color, size }) => (
-                <FontAwesomeIcon
-                  icon={faCircleQuestion}
-                  color={color}
-                  size={size}
-                />
-              ),
-              tabBarBadge: 3,
-            }}
-          />
-          <Tab.Screen
-            name="Scanner"
-            component={ScannerScreen}
-            options={{
-              title: "Scanner",
-              tabBarIcon: ({ color, size }) => (
-                <FontAwesomeIcon icon={faQrcode} color={color} size={size} />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Bag"
-            component={BagScreen}
-            options={{
-              title: "Bag",
-              tabBarIcon: ({ color, size }) => (
-                <FontAwesomeIcon icon={faBriefcase} color={color} size={size} />
-              ),
-            }}
-          />
-        </Tab.Navigator>
-      </NavigationContainer>
+      <QueryClientProvider client={queryClient}>
+        <NavigationContainer>
+          <Tab.Navigator>
+            <Tab.Screen
+              name="Map"
+              component={MapScreen}
+              options={{
+                title: "Map",
+                tabBarIcon: ({ color, size }) => (
+                  <FontAwesomeIcon icon={faMap} color={color} size={size} />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="QuestLog"
+              component={QuestLogScreen}
+              options={{
+                title: "Quests",
+                tabBarIcon: ({ color, size }) => (
+                  <FontAwesomeIcon
+                    icon={faCircleQuestion}
+                    color={color}
+                    size={size}
+                  />
+                ),
+                tabBarBadge: 3,
+              }}
+            />
+            <Tab.Screen
+              name="Scanner"
+              component={ScannerScreen}
+              options={{
+                title: "Scanner",
+                tabBarIcon: ({ color, size }) => (
+                  <FontAwesomeIcon icon={faQrcode} color={color} size={size} />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Bag"
+              component={BagScreen}
+              options={{
+                title: "Bag",
+                tabBarIcon: ({ color, size }) => (
+                  <FontAwesomeIcon icon={faBriefcase} color={color} size={size} />
+                ),
+              }}
+            />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </QueryClientProvider>
     </RecoilRoot>
   );
 }

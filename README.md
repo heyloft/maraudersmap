@@ -54,3 +54,8 @@ Encoding is performed locally with the following command
 ```
 openssl base64 -A -in .env
 ``` 
+
+## Fix issue with `.env` updates:
+1. Terminate running expo-instance
+2. Run `expo r -c`
+3. Recommended: Exit expo-instance when QR code pops up and do yarn start instead.
