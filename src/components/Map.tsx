@@ -121,7 +121,12 @@ const Map = () => {
             >
               <AntDesign
                 name="question"
-                size={selectedMarker?.id == poi.id ? 50 : 30}
+                size={
+                  selectedMarker?.id == poi.id &&
+                  selectedMarker.markerType == MarkerType.POI
+                    ? 50
+                    : 30
+                }
                 color="blue"
               />
             </Marker>
@@ -141,7 +146,12 @@ const Map = () => {
           >
             <AntDesign
               name="star"
-              size={selectedMarker?.id == item.id ? 50 : 30}
+              size={
+                selectedMarker?.id == item.id &&
+                selectedMarker.markerType == MarkerType.ITEM
+                  ? 50
+                  : 30
+              }
               color="hotpink"
             />
           </Marker>
