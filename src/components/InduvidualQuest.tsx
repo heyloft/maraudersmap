@@ -20,6 +20,7 @@ export interface QuestItem {
 }
 
 // Some hardcoded questitems. Can be used for testing.
+// eslint-disable-next-line
 const hiddenKey: QuestItem = {
   title: "Hidden Key",
   description: "To enter you have to find the hidden key.",
@@ -29,7 +30,7 @@ const hiddenKey: QuestItem = {
     ["kajfk", false],
   ],
 };
-
+// eslint-disable-next-line
 const questItem2: QuestItem = {
   title: "Quest Item 2",
   description: "To enter you have to find the hidden key.",
@@ -38,7 +39,7 @@ const questItem2: QuestItem = {
     ["Win quidditch match", false],
   ],
 };
-
+// eslint-disable-next-line
 const questItem3: QuestItem = {
   title: "Quest Item 3",
   description: "To enter you have to find the hidden key.",
@@ -64,7 +65,7 @@ const stepsCompleted = (item: QuestItem) => {
   return `${completedCount}/${totalSteps}`;
 };
 
-const QuestScreen = (props: Quest) => {
+const InduvidualQuest = (props: Quest) => {
   return (
     <ScrollView style={styles.textView}>
       <View style={styles.horizontal}>
@@ -117,7 +118,7 @@ const QuestScreen = (props: Quest) => {
   );
 };
 
-export default QuestScreen;
+export default InduvidualQuest;
 
 const styles = StyleSheet.create({
   header: {
