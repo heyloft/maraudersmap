@@ -10,6 +10,7 @@ interface Quest {
   questItems: QuestItem[];
   description: string;
   possibleRewards: string[];
+  showDialog: () => void;
 }
 
 export interface QuestItem {
@@ -18,36 +19,6 @@ export interface QuestItem {
   description: string;
   steps: [string, boolean][]; // Array of tuples where each tuple is [description, completed].
 }
-
-// Some hardcoded questitems. Can be used for testing.
-// eslint-disable-next-line
-const hiddenKey: QuestItem = {
-  title: "Hidden Key",
-  description: "To enter you have to find the hidden key.",
-  steps: [
-    ["Defeat cave troll", true],
-    ["Win quidditch match", true],
-    ["kajfk", false],
-  ],
-};
-// eslint-disable-next-line
-const questItem2: QuestItem = {
-  title: "Quest Item 2",
-  description: "To enter you have to find the hidden key.",
-  steps: [
-    ["Defeat cave troll", true],
-    ["Win quidditch match", false],
-  ],
-};
-// eslint-disable-next-line
-const questItem3: QuestItem = {
-  title: "Quest Item 3",
-  description: "To enter you have to find the hidden key.",
-  steps: [
-    ["Defeat cave troll", false],
-    ["Win quidditch match", false],
-  ],
-};
 
 /**
  * Check the progress of a QuestItem by calculationg the fraction completed steps / total steps.
@@ -68,12 +39,12 @@ const stepsCompleted = (item: QuestItem) => {
 const InduvidualQuest = (props: Quest) => {
   return (
     <ScrollView style={styles.textView}>
-      <View style={styles.horizontal}>
+      <View style={styles.horizontalContainer}>
         <Text style={styles.header}>{props.title}</Text>
         <Button
           mode="outlined"
           color="red"
-          onPress={() => console.log("haloo")}
+          onPress={props.showDialog}
           style={styles.abandonButton}
         >
           Abandon
@@ -121,24 +92,22 @@ const InduvidualQuest = (props: Quest) => {
 export default InduvidualQuest;
 
 const styles = StyleSheet.create({
+  textView: {
+    padding: 10,
+  },
+  horizontalContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  container: {
+    paddingTop: 10,
+  },
   header: {
     fontSize: 20,
     fontWeight: "bold",
     paddingBottom: 10,
     flex: 5,
-  },
-  container: {
-    paddingTop: 10,
-  },
-  textView: {
-    paddingTop: 60,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  horizontal: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
   },
   abandonButton: {
     flex: 1,
