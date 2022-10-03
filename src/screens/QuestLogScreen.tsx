@@ -1,7 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet, SectionList } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { QuestStackParamList } from "./QuestNavigator";
+import { Pressable } from "react-native";
 
-const QuestLogScreen = () => {
+const QuestLogScreen = ({
+  navigation,
+}: NativeStackScreenProps<QuestStackParamList, "QuestLog">) => {
   const DATA = [
     {
       title: "Available Quests",
@@ -22,7 +27,11 @@ const QuestLogScreen = () => {
         <SectionList
           sections={DATA}
           keyExtractor={(item, index) => item + index}
-          renderItem={({ item }) => <Item title={item} />}
+          renderItem={({ item }) => (
+            <Pressable onPress={() => navigation.navigate("Quest")}>
+              <Item title={item} />
+            </Pressable>
+          )}
           renderSectionHeader={({ section: { title } }) => (
             <Text style={styles.header}>{title}</Text>
           )}
