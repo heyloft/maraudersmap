@@ -3,7 +3,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
 import BagScreen from "./src/screens/BagScreen";
 import MapScreen from "./src/screens/MapScreen";
-import QuestLogScreen from "./src/screens/QuestLogScreen";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faMap } from "@fortawesome/free-solid-svg-icons/faMap";
 import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons/faCircleQuestion";
@@ -14,12 +13,13 @@ import { useEffect } from "react";
 import { RecoilRoot } from "recoil";
 import { notificationSetup } from "./src/notifications/notifications";
 import { QueryClient, QueryClientProvider } from "react-query";
+import QuestNavigator from "./src/screens/QuestNavigator";
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 export type RootStackParamList = {
   Map: undefined;
   Scanner: undefined;
-  QuestLog: undefined;
+  QuestNavigator: undefined;
   Bag: undefined;
 };
 
@@ -46,8 +46,8 @@ export default function App() {
               }}
             />
             <Tab.Screen
-              name="QuestLog"
-              component={QuestLogScreen}
+              name="QuestNavigator"
+              component={QuestNavigator}
               options={{
                 title: "Quests",
                 tabBarIcon: ({ color, size }) => (
@@ -57,6 +57,7 @@ export default function App() {
                     size={size}
                   />
                 ),
+                headerShown: false,
                 tabBarBadge: 3,
               }}
             />
@@ -76,7 +77,11 @@ export default function App() {
               options={{
                 title: "Bag",
                 tabBarIcon: ({ color, size }) => (
-                  <FontAwesomeIcon icon={faBriefcase} color={color} size={size} />
+                  <FontAwesomeIcon
+                    icon={faBriefcase}
+                    color={color}
+                    size={size}
+                  />
                 ),
               }}
             />
