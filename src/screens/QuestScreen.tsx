@@ -35,15 +35,15 @@ const questItem3: QuestItem = {
 };
 
 const QuestScreen = () => {
-  const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
+  const [showAbandonDialog, setShowAbandonDialog] = useState<boolean>(false);
   return (
     <Provider>
       <DeleteQuestDialog
-        visible={showDeleteDialog}
-        setVisible={setShowDeleteDialog}
+        visible={showAbandonDialog}
+        setVisible={setShowAbandonDialog}
       />
       <InduvidualQuest
-        showDialog={() => setShowDeleteDialog(true)}
+        showDialog={() => setShowAbandonDialog(true)}
         title="Gathering of Easter Eggs"
         description="This is a colourful description of the Gathering of Easter Eggs quest. This is
         a colourful description of the Gathering of Easter Eggs quest. This is a colourful 
