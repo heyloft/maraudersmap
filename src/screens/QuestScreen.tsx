@@ -1,7 +1,7 @@
 import React from "react";
 import { Provider } from "react-native-paper";
 import InduvidualQuest, { QuestItem } from "../components/InduvidualQuest";
-import DeleteQuestDialog from "../components/DeleteQuestDialog";
+import AbandonQuestDialog from "../components/AbandonQuestDialog";
 import { useState } from "react";
 
 // Some hardcoded questitems. Can be used for testing.
@@ -38,7 +38,7 @@ const QuestScreen = () => {
   const [showAbandonDialog, setShowAbandonDialog] = useState<boolean>(false);
   return (
     <Provider>
-      <DeleteQuestDialog
+      <AbandonQuestDialog
         visible={showAbandonDialog}
         setVisible={setShowAbandonDialog}
       />

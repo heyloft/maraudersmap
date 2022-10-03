@@ -6,7 +6,7 @@ interface deleteQuestDialogProps {
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DeleteQuestDialog = (props: deleteQuestDialogProps) => {
+const AbandonQuestDialog = (props: deleteQuestDialogProps) => {
   const onDeleteQuest = () => {
     props.setVisible(false);
   };
@@ -39,4 +39,4 @@ const DeleteQuestDialog = (props: deleteQuestDialogProps) => {
   );
 };
 
-export default DeleteQuestDialog;
+export default AbandonQuestDialog;
