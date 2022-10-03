@@ -1,6 +1,7 @@
 import React from "react";
-import { ScrollView, Text, StyleSheet } from "react-native";
+import { ScrollView, Text, StyleSheet, View } from "react-native";
 import { List, Divider } from "react-native-paper";
+import { Button } from "react-native-paper";
 
 interface Quest {
   // TODO: Replace with proper Quest interface.
@@ -66,36 +67,52 @@ const stepsCompleted = (item: QuestItem) => {
 const QuestScreen = (props: Quest) => {
   return (
     <ScrollView style={styles.textView}>
-      <Text style={styles.header}>{props.title}</Text>
-      <Text style={styles.date}>
+      <View style={styles.horizontal}>
+        <Text style={styles.header}>{props.title}</Text>
+        <Button
+          mode="outlined"
+          color="red"
+          onPress={() => console.log("haloo")}
+          style={styles.abandonButton}
+        >
+          Abandon
+        </Button>
+      </View>
+      <Text>
         {props.date.toLocaleDateString(undefined, {
           weekday: "short",
           month: "short",
           day: "numeric",
         })}
       </Text>
-      {props.questItems.map((item) => (
-        // TODO: Set proper key.
-        <React.Fragment key={item.title}>
-          <Divider />
+      <View style={styles.container}>
+        {props.questItems.map((item) => (
+          // TODO: Set proper key.
+          <React.Fragment key={item.title}>
+            <Divider />
+            <List.Item
+              title={item.title}
+              right={() => <Text>{stepsCompleted(item)}</Text>}
+              onPress={() => console.log(`${item.title} was pressed.`)}
+            />
+          </React.Fragment>
+        ))}
+      </View>
+      <View style={styles.container}>
+        <Text style={styles.header}>Description:</Text>
+        <Text>{props.description}</Text>
+      </View>
+      <View style={styles.container}>
+        <Text style={styles.header}>Rewards:</Text>
+        <Text>Through your choosing, you will receive one of these items:</Text>
+        {props.possibleRewards?.map((reward) => (
           <List.Item
-            title={item.title}
-            right={() => <Text>{stepsCompleted(item)}</Text>}
-            onPress={() => console.log(`${item.title} was pressed.`)}
+            key={reward} // TODO: Set proper key.
+            title={reward}
+            left={(props) => <List.Icon {...props} icon="square" />}
           />
-        </React.Fragment>
-      ))}
-      <Text style={styles.header}>Description:</Text>
-      <Text style={styles.description}>{props.description}</Text>
-      <Text style={styles.header}>Rewards:</Text>
-      <Text>Through your choosing, you will receive one of these items:</Text>
-      {props.possibleRewards?.map((reward) => (
-        <List.Item
-          key={reward} // TODO: Set proper key.
-          title={reward}
-          left={(props) => <List.Icon {...props} icon="square" />}
-        />
-      ))}
+        ))}
+      </View>
     </ScrollView>
   );
 };
@@ -106,15 +123,24 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 20,
     fontWeight: "bold",
-    marginTop: 10,
-    marginBottom: 5,
+    paddingBottom: 10,
+    flex: 5,
   },
-  date: {
-    marginBottom: 10,
+  container: {
+    paddingTop: 10,
   },
-  description: {},
   textView: {
-    marginTop: 50,
-    marginBottom: 10,
+    paddingTop: 60,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  abandonButton: {
+    flex: 1,
+    marginLeft: 10,
   },
 });
