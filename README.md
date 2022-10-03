@@ -46,3 +46,16 @@ expo login
 expo publish --release-channel <channel>
 ```
 where `<channel>` could be `main`, `dev` or something else we want to use.
+
+## Updating `.env` for GitHub Actions
+In order to use a .env file inside GitHub Actions, we store the .env file as a base64 encoded string in a repository secret (`ENV_FILE_BASE64`). 
+
+Encoding is performed locally with the following command
+```
+openssl base64 -A -in .env
+``` 
+
+## Fix issue with `.env` updates:
+1. Terminate running expo-instance
+2. Run `expo r -c`
+3. Recommended: Exit expo-instance when QR code pops up and do yarn start instead.
