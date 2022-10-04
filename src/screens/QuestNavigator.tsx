@@ -8,7 +8,7 @@ export type QuestStackParamList = {
   Quest: undefined;
 };
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<QuestStackParamList>();
 
 const QuestNavigator = () => {
   return (
