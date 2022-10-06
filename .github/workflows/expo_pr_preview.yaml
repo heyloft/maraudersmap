@@ -8,6 +8,7 @@ jobs:
       - name: "🤓 Run Eslint"
         run: "yarn lint"
   prettier:
+    needs: [lint]
     runs-on: "ubuntu_latest"
     steps:
       - name: "💋 Run Prettier"
