@@ -3,6 +3,7 @@ import {
   faCircleQuestion,
   faMap,
   faQrcode,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -12,6 +13,7 @@ import { currentUserInfo } from "../recoil/atom";
 import BagScreen from "./BagScreen";
 import LogInScreen from "./LogInScreen";
 import MapScreen from "./MapScreen";
+import ProfileScreen from "./ProfileScreen";
 import QuestNavigator from "./QuestNavigator";
 import ScannerScreen from "./ScannerScreen";
 
@@ -20,6 +22,7 @@ export type RootStackParamList = {
   Scanner: undefined;
   QuestNavigator: undefined;
   Bag: undefined;
+  Profile: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -72,6 +75,16 @@ const AppScreen = () => {
           title: "Bag",
           tabBarIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faBriefcase} color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesomeIcon icon={faUser} color={color} size={size} />
           ),
         }}
       />
