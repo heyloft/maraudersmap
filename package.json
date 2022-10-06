@@ -9,6 +9,7 @@
     "web": "expo start --web",
     "prepare": "husky install .husky",
     "lint": "eslint src",
+    "prettier": "prettier --check src",
     "codegen": "dotenv -- bash -c 'openapi --input $URL_CODEGEN --output ./src/client --client fetch'"
   },
   "dependencies": {

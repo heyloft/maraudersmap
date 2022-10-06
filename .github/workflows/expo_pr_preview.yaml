@@ -1,6 +1,17 @@
 on: [pull_request]
 jobs:
+  lint:
+    runs-on: ubuntu_latest
+    steps:
+      - name: "🤓 Run Eslint"
+        uses: "yarn lint"
+  prettier:
+    runs-on: "ubuntu_latest"
+    steps:
+      - name: "💋 Run Prettier"
+        uses: "yarn prettier"
   publish:
+    needs: [lint, prettier]
     runs-on: ubuntu-latest
     steps:
       - name: 🏗 Setup repo
@@ -25,7 +36,6 @@ jobs:
         env:
           ENV_FILE_BASE64: ${{ secrets.ENV_FILE_BASE64 }}
         run: echo $ENV_FILE_BASE64 | base64 --decode > .env
-
 
       - name: 🚀 Publish preview
         run: expo publish --release-channel=pr-${{ github.event.number }} --non-interactive
