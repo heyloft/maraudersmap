@@ -3,13 +3,15 @@ jobs:
   lint:
     runs-on: ubuntu_latest
     steps:
+      - name: "🤪 Install dependencies"
+        run: "yarn install"
       - name: "🤓 Run Eslint"
-        uses: "yarn lint"
+        run: "yarn lint"
   prettier:
     runs-on: "ubuntu_latest"
     steps:
       - name: "💋 Run Prettier"
-        uses: "yarn prettier"
+        run: "yarn prettier"
   publish:
     needs: [lint, prettier]
     runs-on: ubuntu-latest
