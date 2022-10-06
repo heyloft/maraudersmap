@@ -6,12 +6,13 @@ import { LocationObject, LocationObjectCoords } from "expo-location";
 import { distance, locationSetup } from "../location/location";
 import { currentLocation } from "../recoil/atom";
 import { useQuery } from "react-query";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { TILE_URL_TEMPLATE } from "@env";
 import MarkerCard from "./MarkerCard";
 import { Item, POI } from "../client";
 import fetchItems from "../api/fetch-items";
 import fetchPois from "../api/fetch-pois";
+import { IconButton } from "react-native-paper";
 
 enum MarkerType {
   POI = "POI",
@@ -43,16 +44,28 @@ const Map = () => {
 
   const MIN_ZOOM_LEVEL = 17;
   const MAX_ZOOM_LEVEL = 21;
-  const [location, setLocation] = useRecoilState(currentLocation); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [location, setLocation] = useRecoilState(currentLocation);
+  const [focusUserLocation, setFocusUserLocation] = useState(true);
 
-  const onPositionChange = (new_location: LocationObject) => {
-    setLocation(new_location);
-    console.log(`Distance to Digs: ${distance(DIGS, new_location.coords)} m`);
+  const onPositionChange = (newLocation: LocationObject) => {
+    setLocation(newLocation);
+    console.log(`Distance to Digs: ${distance(DIGS, newLocation.coords)} m`);
   };
 
   useEffect(() => {
     locationSetup(onPositionChange);
   }, []);
+
+  useEffect(() => {
+    if (focusUserLocation && location) {
+      map.current?.animateToRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0,
+        longitudeDelta: 0,
+      });
+    }
+  }, [focusUserLocation, location]);
 
   const getSelectedMarker = () => {
     if (!selectedMarker) return null;
@@ -89,10 +102,9 @@ const Map = () => {
           latitudeDelta: 0.0008,
           longitudeDelta: 0.0008,
         }}
+        onPanDrag={() => setFocusUserLocation(false)}
         maxZoomLevel={MAX_ZOOM_LEVEL}
         minZoomLevel={MIN_ZOOM_LEVEL}
-        showsUserLocation={true}
-        followsUserLocation={false}
       >
         <UrlTile
           /**
@@ -105,6 +117,17 @@ const Map = () => {
           maximumZ={MAX_ZOOM_LEVEL}
           maximumNativeZ={MAX_ZOOM_LEVEL}
         />
+
+        {location && (
+          <Marker
+            coordinate={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            }}
+          >
+            <FontAwesome5 name="dot-circle" size={24} color="#1E88E5" />
+          </Marker>
+        )}
 
         {pois?.map((poi) => {
           return (
@@ -157,6 +180,19 @@ const Map = () => {
           </Marker>
         ))}
       </MapView>
+      <IconButton
+        style={{
+          position: "absolute",
+          right: 10,
+          top: 10,
+          backgroundColor: "#fff",
+          borderRadius: 6,
+        }}
+        size={26}
+        color={focusUserLocation ? "#1E88E5" : "#666"}
+        icon={focusUserLocation ? "crosshairs-gps" : "crosshairs"}
+        onPress={() => setFocusUserLocation((prev) => !prev)}
+      />
       {selectedMarker != null ? (
         <MarkerCard
           title={getSelectedMarker()?.title}
