@@ -30,7 +30,9 @@ const Tab = createBottomTabNavigator<RootStackParamList>();
 const AppScreen = () => {
   const [user] = useRecoilState(currentUserInfo);
 
-  return user.username ? (
+  return !user.username ? (
+    <LogInScreen />
+  ) : (
     <Tab.Navigator>
       <Tab.Screen
         name="Map"
@@ -89,8 +91,6 @@ const AppScreen = () => {
         }}
       />
     </Tab.Navigator>
-  ) : (
-    <LogInScreen />
   );
 };
 

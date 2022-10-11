@@ -28,6 +28,6 @@ const defaultUserInfo: UserInfo = {
 };
 
 export const currentUserInfo = atom({
-  key: "defaultUserInfo",
+  key: "currentUserInfo",
   default: defaultUserInfo,
 });
