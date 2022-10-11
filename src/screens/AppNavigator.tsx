@@ -17,11 +17,11 @@ const AppScreen = () => {
             options={{ headerShown: false }}
             name="Main"
             component={MainScreen}
-          ></Stack.Screen>
+          />
         </>
       ) : (
         <>
-          <Stack.Screen name="LogIn" component={LogInScreen}></Stack.Screen>
+          <Stack.Screen name="LogIn" component={LogInScreen} />
         </>
       )}
     </Stack.Navigator>
