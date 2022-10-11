@@ -19,7 +19,6 @@ jobs:
         run: "yarn lint"
 
   prettier:
-    needs: [lint]
     runs-on: "ubuntu-latest"
     steps:
       - name: 🏗 Setup repo
