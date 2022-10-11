@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   faBriefcase,
   faCircleQuestion,
@@ -6,16 +8,13 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React from "react";
-import { useRecoilState } from "recoil";
-import { currentUserInfo } from "../recoil/atom";
+
 import BagScreen from "./BagScreen";
-import LogInScreen from "./LogInScreen";
 import MapScreen from "./MapScreen";
 import ProfileScreen from "./ProfileScreen";
 import QuestNavigator from "./QuestNavigator";
 import ScannerScreen from "./ScannerScreen";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 export type RootStackParamList = {
   Map: undefined;
@@ -27,12 +26,8 @@ export type RootStackParamList = {
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
-const AppScreen = () => {
-  const [user] = useRecoilState(currentUserInfo);
-
-  return !user.username ? (
-    <LogInScreen />
-  ) : (
+const MainScreen = () => {
+  return (
     <Tab.Navigator>
       <Tab.Screen
         name="Map"
@@ -94,4 +89,4 @@ const AppScreen = () => {
   );
 };
 
-export default AppScreen;
+export default MainScreen;

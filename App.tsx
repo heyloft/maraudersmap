@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { RecoilRoot } from "recoil";
 import { notificationSetup } from "./src/notifications/notifications";
 import { QueryClient, QueryClientProvider } from "react-query";
-import AppScreen from "./src/screens/AppScreen";
+import AppNavigator from "./src/screens/AppNavigator";
 
 const queryClient = new QueryClient();
 
@@ -17,7 +17,7 @@ export default function App() {
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
         <NavigationContainer>
-          <AppScreen />
+          <AppNavigator />
         </NavigationContainer>
       </QueryClientProvider>
     </RecoilRoot>
