@@ -3,16 +3,28 @@ jobs:
   lint:
     runs-on: ubuntu_latest
     steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v2
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: yarn
+
       - name: "🤪 Install dependencies"
         run: "yarn install"
+
       - name: "🤓 Run Eslint"
         run: "yarn lint"
+
   prettier:
     needs: [lint]
     runs-on: "ubuntu_latest"
     steps:
       - name: "💋 Run Prettier"
         run: "yarn prettier"
+
   publish:
     needs: [lint, prettier]
     runs-on: ubuntu-latest
