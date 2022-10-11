@@ -3,7 +3,15 @@ import { POI } from "../client/models/POI";
 import { sendNotification } from "../notifications/notifications";
 import { distance } from "./location";
 
-const POIS: POI[] = [
+const TRESHOLD = 150;
+
+const lockedLocations = new Set<POI>([
+  {
+    title: "Drivhuset",
+    description: "Drivhuset mastersal",
+    position: [63.4164036797957, 10.403429675502757],
+    id: 4,
+  },
   {
     title: "Digs",
     description: "Digs is the main office of Heyloft and many other startups.",
@@ -22,20 +30,13 @@ const POIS: POI[] = [
     position: [63.4176158516293, 10.40398152938794],
     id: 3,
   },
-  {
-    title: "Drivhuset",
-    description: "Drivhuset mastersal",
-    position: [63.4164036797957, 10.403429675502757],
-    id: 4,
-  },
-];
+]);
 
 export const locationUnlock = (newLocation: LocationObject) => {
-  const unlocked: POI[] = [];
-  for (let index = 0; index < POIS.length; index++) {
+  lockedLocations.forEach((item) => {
     const location: LocationObjectCoords = {
-      latitude: POIS[index].position[0],
-      longitude: POIS[index].position[1],
+      latitude: item.position[0],
+      longitude: item.position[1],
       accuracy: null,
       altitude: null,
       altitudeAccuracy: null,
@@ -43,17 +44,13 @@ export const locationUnlock = (newLocation: LocationObject) => {
       speed: null,
     };
     const dist = distance(newLocation.coords, location);
-    if (dist < 100) {
-      console.log(dist);
-      unlocked.push(POIS[index]);
+    if (dist < TRESHOLD) {
       sendNotification(
-        "Congratulations you unlocked a new location",
-        `You unlocked ${POIS[index].title}.`
+        "Congratulations you unlocked a new Location!",
+        `${item.title} is now unlocked!`
       );
+      lockedLocations.delete(item);
+      // TODO: Add quest to questlog:
     }
-  }
-  for (let index = 0; index < unlocked.length; index++) {
-    POIS.splice(POIS.indexOf(unlocked[index]));
-    console.log(POIS.length);
-  }
+  });
 };

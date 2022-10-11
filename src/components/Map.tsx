@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
 import MapView, { MAP_TYPES, Marker, UrlTile } from "react-native-maps";
 import { useRecoilState } from "recoil";
-import { LocationObject, LocationObjectCoords } from "expo-location";
-import { distance, locationSetup } from "../location/location";
+import { LocationObject } from "expo-location";
+import { locationSetup } from "../location/location";
 import { currentLocation } from "../recoil/atom";
 import { useQuery } from "react-query";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
@@ -13,21 +13,12 @@ import { Item, POI } from "../client";
 import fetchItems from "../api/fetch-items";
 import fetchPois from "../api/fetch-pois";
 import { IconButton } from "react-native-paper";
+import { locationUnlock } from "../location/locationUnlock";
 
 enum MarkerType {
   POI = "POI",
   ITEM = "ITEM",
 }
-
-const DIGS: LocationObjectCoords = {
-  latitude: 63.43133846620186,
-  longitude: 10.400746365666315,
-  altitude: null,
-  accuracy: null,
-  altitudeAccuracy: null,
-  heading: null,
-  speed: null,
-};
 
 const Map = () => {
   const [selectedMarker, setSelectedMarker] = useState<null | {
@@ -49,7 +40,7 @@ const Map = () => {
 
   const onPositionChange = (newLocation: LocationObject) => {
     setLocation(newLocation);
-    console.log(`Distance to Digs: ${distance(DIGS, newLocation.coords)} m`);
+    locationUnlock(newLocation);
   };
 
   useEffect(() => {
