@@ -1,7 +1,7 @@
 on: [pull_request]
 jobs:
   lint:
-    runs-on: ubuntu_latest
+    runs-on: ubuntu-latest
     steps:
       - name: 🏗 Setup repo
         uses: actions/checkout@v2
@@ -20,7 +20,7 @@ jobs:
 
   prettier:
     needs: [lint]
-    runs-on: "ubuntu_latest"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "💋 Run Prettier"
         run: "yarn prettier"

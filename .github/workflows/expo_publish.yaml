@@ -4,7 +4,7 @@ on:
       - main
 jobs:
   publish:
-    runs-on: ubuntu_latest
+    runs-on: ubuntu-latest
     steps:
       - name: 🏗 Setup repo
         uses: actions/checkout@v2
