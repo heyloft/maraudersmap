@@ -6,7 +6,7 @@ import { Pressable } from "react-native";
 
 const QuestLogScreen = ({
   navigation,
-}: NativeStackScreenProps<QuestStackParamList, "QuestLog">) => {
+}: NativeStackScreenProps<QuestStackParamList, "Quest log">) => {
   const DATA = [
     {
       title: "Available Quests",

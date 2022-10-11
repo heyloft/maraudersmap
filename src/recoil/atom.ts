@@ -18,3 +18,16 @@ export const currentLocation = atom({
   key: "currentLocation", // unique ID (with respect to other atoms/selectors)
   default: defaultLocation, // default value (aka initial value)
 });
+
+interface UserInfo {
+  username: null | string;
+}
+
+const defaultUserInfo: UserInfo = {
+  username: null,
+};
+
+export const currentUserInfo = atom({
+  key: "currentUserInfo",
+  default: defaultUserInfo,
+});
