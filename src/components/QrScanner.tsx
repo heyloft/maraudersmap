@@ -7,10 +7,12 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import QuestCompletedModal from "./QuestCompletedModal";
 
 export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState<boolean>(false);
+  const [hasCompletedQuest, setQuestCompleted] = useState<boolean>(false);
 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
@@ -29,6 +31,7 @@ export default function QrScanner() {
     data: string;
   }) => {
     setScanned(true);
+    setQuestCompleted(true);
     alert(`Bar code with type ${type} and data ${data} has been scanned!`);
   };
 
@@ -48,10 +51,17 @@ export default function QrScanner() {
             style={StyleSheet.absoluteFillObject}
           />
           {scanned && (
-            <Button
-              title={"Tap to Scan Again"}
-              onPress={() => setScanned(false)}
-            />
+            <View style={{ marginTop: 200, backgroundColor: "white" }}>
+              <Button
+                title={"Tap to scan again"}
+                onPress={() => setScanned(false)}
+              />
+            </View>
+          )}
+          {hasCompletedQuest && (
+            <View>
+              <QuestCompletedModal />
+            </View>
           )}
         </>
       )}
