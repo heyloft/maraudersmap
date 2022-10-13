@@ -26,7 +26,7 @@ const QuestCompletedModal = () => {
               <Text style={{ fontSize: 27, fontWeight: "500" }}>
                 Quest Completed!
               </Text>
-              <Text style={{ fontSize: 20, textAlign: "center" }}>
+              <Text style={{ fontSize: 20, textAlign: "center", margin: 15 }}>
                 Congratulations! You have completed the Gathering of Easter
                 Eggs.
               </Text>

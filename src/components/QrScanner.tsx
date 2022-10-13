@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import QuestCompletedModal from "./QuestCompletedModal";
+import { Provider } from "react-native-paper";
 
 export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -36,36 +37,34 @@ export default function QrScanner() {
   };
 
   return (
-    <View style={styles.container}>
-      {hasPermission === null ? (
-        <>
-          <ActivityIndicator size={"large"} color="#1E88E5" />
-          <Text style={{ marginTop: 20 }}>Requesting camera permission</Text>
-        </>
-      ) : !hasPermission ? (
-        <Text>No access to camera</Text>
-      ) : (
-        <>
-          <BarCodeScanner
-            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-            style={StyleSheet.absoluteFillObject}
-          />
-          {scanned && (
-            <View style={{ marginTop: 200, backgroundColor: "white" }}>
-              <Button
-                title={"Tap to scan again"}
-                onPress={() => setScanned(false)}
-              />
-            </View>
-          )}
-          {hasCompletedQuest && (
-            <View>
-              <QuestCompletedModal />
-            </View>
-          )}
-        </>
-      )}
-    </View>
+    <Provider>
+      <View style={styles.container}>
+        {hasPermission === null ? (
+          <>
+            <ActivityIndicator size={"large"} color="#1E88E5" />
+            <Text style={{ marginTop: 20 }}>Requesting camera permission</Text>
+          </>
+        ) : !hasPermission ? (
+          <Text>No access to camera</Text>
+        ) : (
+          <>
+            <BarCodeScanner
+              onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+              style={StyleSheet.absoluteFillObject}
+            />
+            {scanned && (
+              <View style={{ marginTop: 550 }}>
+                <Button
+                  title={"Tap to scan again"}
+                  onPress={() => setScanned(false)}
+                />
+              </View>
+            )}
+            {hasCompletedQuest && <QuestCompletedModal />}
+          </>
+        )}
+      </View>
+    </Provider>
   );
 }
 
