@@ -8,7 +8,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "prepare": "husky install .husky",
-    "lint": "eslint src",
+    "lint": "eslint --fix $INIT_CWD",
+    "format": "prettier --write $INIT_CWD",
     "codegen": "dotenv -- bash -c 'openapi --input $URL_CODEGEN --output ./src/client --client fetch'"
   },
   "dependencies": {
