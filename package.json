@@ -30,6 +30,7 @@
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-native": "0.69.6",
+    "react-native-confetti-cannon": "^1.5.2",
     "react-native-dotenv": "^3.3.1",
     "react-native-maps": "0.31.1",
     "react-native-paper": "^4.12.4",
