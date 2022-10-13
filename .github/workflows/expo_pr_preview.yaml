@@ -15,8 +15,8 @@ jobs:
       - name: "🤪 Install dependencies"
         run: "yarn install"
 
-      - name: "🤓 Run Eslint"
-        run: "yarn lint"
+      - name: "🤓 Run ESLint"
+        run: "yarn eslint ."
 
   prettier:
     runs-on: "ubuntu-latest"
@@ -29,12 +29,12 @@ jobs:
         with:
           node-version: 16.x
           cache: yarn
-      
+
       - name: "🤪 Install dependencies"
         run: "yarn install"
-        
+
       - name: "💋 Run Prettier"
-        run: "yarn prettier"
+        run: "yarn prettier --check ."
 
   publish:
     needs: [lint, prettier]
