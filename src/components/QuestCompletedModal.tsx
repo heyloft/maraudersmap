@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Modal, Portal, Text, Button, Provider } from "react-native-paper";
+import { Modal, Portal, Text, Button } from "react-native-paper";
 import ConfettiCannon from "react-native-confetti-cannon";
 
 const QuestCompletedModal = () => {
   const [visible, setVisible] = useState(false);
 
   return (
-    <Provider>
+    <>
       <Portal>
         <Modal
           visible={visible}
@@ -21,30 +21,27 @@ const QuestCompletedModal = () => {
             fallSpeed={2000}
             origin={{ x: 0, y: 0 }}
           />
-          <Provider>
-            <View style={styles.container}>
-              <Text style={{ fontSize: 27, fontWeight: "500" }}>
-                Quest Completed!
-              </Text>
-              <Text style={{ fontSize: 20, textAlign: "center", margin: 15 }}>
-                Congratulations! You have completed the Gathering of Easter
-                Eggs.
-              </Text>
-              <Button
-                mode="contained"
-                onPress={() => setVisible(false)}
-                color="green"
-              >
-                Continue
-              </Button>
-            </View>
-          </Provider>
+          <View style={styles.container}>
+            <Text style={{ fontSize: 27, fontWeight: "500" }}>
+              Quest Completed!
+            </Text>
+            <Text style={{ fontSize: 20, textAlign: "center", margin: 15 }}>
+              Congratulations! You have completed the Gathering of Easter Eggs.
+            </Text>
+            <Button
+              mode="contained"
+              onPress={() => setVisible(false)}
+              color="green"
+            >
+              Continue
+            </Button>
+          </View>
         </Modal>
       </Portal>
       <Button style={{ marginTop: 30 }} onPress={() => setVisible(true)}>
         Show
       </Button>
-    </Provider>
+    </>
   );
 };
 
