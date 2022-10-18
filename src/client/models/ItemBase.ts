@@ -2,8 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type POICreate = {
+import type { ItemType } from "./ItemType";
+
+export type ItemBase = {
   title: string;
+  item_type: ItemType;
   description?: string;
-  position: Array<any>;
+  icon: string;
 };
