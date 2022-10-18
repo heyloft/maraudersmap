@@ -60,6 +60,7 @@ const LogInScreen = () => {
         onPress={() => loginOrSignup({ username: usernameInput })}
         style={styles.loginButton}
         icon={"login"}
+        disabled={!usernameIsValid(usernameInput)}
       >
         <Text style={styles.loginButtonText}>Log in</Text>
       </Button>
