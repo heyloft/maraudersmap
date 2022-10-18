@@ -1,12 +1,39 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Button, TextInput } from "react-native-paper";
+import { useMutation, useQuery } from "react-query";
 import { useRecoilState } from "recoil";
+import getUser from "../api/get-user";
+import createUser from "../api/utils/createUser";
+import { User, UserCreate } from "../client";
 import { currentUserInfo } from "../recoil/atom";
 
 const LogInScreen = () => {
   const [, setUser] = useRecoilState(currentUserInfo);
   const [username, setUsername] = useState("");
+  const { refetch } = useQuery<User>(
+    ["user", username],
+    () => getUser(username),
+    {
+      enabled: false,
+      onSuccess: (data) => {
+        setUser({ userID: data.id, username: data.username });
+      },
+    }
+  );
+  const { mutate } = useMutation(createUser, {
+    onSuccess: (data) => {
+      const res = data.data;
+      setUser({ userID: res.id, username: res.username });
+    },
+    onError: () => {
+      refetch();
+    },
+  });
+
+  const submitNewUser = (data: UserCreate) => {
+    mutate(data.username);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.containerChild}>
@@ -21,7 +48,7 @@ const LogInScreen = () => {
       </View>
       <Button
         mode="contained"
-        onPress={() => setUser({ username })}
+        onPress={() => submitNewUser({ username })}
         style={styles.loginButton}
         icon={"login"}
       >

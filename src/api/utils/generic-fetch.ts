@@ -1,8 +1,10 @@
 import { BASE_URL } from "@env";
+import axios from "axios";
 
 const genericFetch = async (endpoint: string) => {
-  const res = await fetch(BASE_URL + endpoint);
-  return res.json();
+  return await (
+    await axios.get(BASE_URL + endpoint)
+  ).data;
 };
 
 export default genericFetch;

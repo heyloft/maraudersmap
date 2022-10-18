@@ -1,15 +1,9 @@
 import { BASE_URL } from "@env";
+import axios from "axios";
 
 const genericPost = async (endpoint: string, data: object) => {
   //TODO: Replace data type
-  const response = await fetch(BASE_URL + endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/JSON",
-    },
-    body: JSON.stringify(data),
-  });
-  return response.json();
+  return axios.post(BASE_URL + endpoint, data);
 };
 
 export default genericPost;

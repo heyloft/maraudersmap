@@ -15,7 +15,7 @@ const ProfileScreen = () => {
         style={styles.logoutButton}
         mode="contained"
         color="red"
-        onPress={() => setUser((prev) => ({ ...prev, username: null }))}
+        onPress={() => setUser({ userID: null, username: null })}
         icon="logout"
         contentStyle={{ flexDirection: "row-reverse" }}
       >
