@@ -9,9 +9,8 @@ import { useQuery } from "react-query";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { TILE_URL_TEMPLATE } from "@env";
 import MarkerCard from "./MarkerCard";
-import { Item, POI } from "../client";
+import { Item } from "../client";
 import fetchItems from "../api/fetch-items";
-import fetchPois from "../api/fetch-pois";
 import { IconButton } from "react-native-paper";
 import { locationUnlock } from "../location/locationUnlock";
 
@@ -22,7 +21,7 @@ enum MarkerType {
 
 const Map = () => {
   const [selectedMarker, setSelectedMarker] = useState<null | {
-    id: number;
+    id: string;
     markerType: MarkerType;
   }>(null);
   const [animateToCoordinate, setAnimateToCoordinate] = useState(false);
@@ -30,8 +29,6 @@ const Map = () => {
 
   //TODO: Add error handling from api-fetches and maybe loading indication
   const { data: items } = useQuery<Item[], Error>("items", fetchItems);
-
-  const { data: pois } = useQuery<POI[], Error>("pois", fetchPois);
 
   const MIN_ZOOM_LEVEL = 17;
   const MAX_ZOOM_LEVEL = 21;
@@ -60,9 +57,7 @@ const Map = () => {
 
   const getSelectedMarker = () => {
     if (!selectedMarker) return null;
-    return selectedMarker.markerType == MarkerType.POI
-      ? pois?.find((poi) => poi.id == selectedMarker.id)
-      : items?.find((item) => item.id == selectedMarker.id);
+    return items?.find((item) => item.id == selectedMarker.id);
   };
 
   useEffect(() => {
@@ -120,32 +115,6 @@ const Map = () => {
           </Marker>
         )}
 
-        {pois?.map((poi) => {
-          return (
-            <Marker
-              key={`poi:${poi.id}`}
-              coordinate={{
-                latitude: poi.position[0],
-                longitude: poi.position[1],
-              }}
-              onPress={() => {
-                setSelectedMarker({ id: poi.id, markerType: MarkerType.POI });
-                setAnimateToCoordinate(true);
-              }}
-            >
-              <AntDesign
-                name="question"
-                size={
-                  selectedMarker?.id == poi.id &&
-                  selectedMarker.markerType == MarkerType.POI
-                    ? 50
-                    : 30
-                }
-                color="blue"
-              />
-            </Marker>
-          );
-        })}
         {items?.map((item) => (
           <Marker
             key={`item:${item.id}`}
