@@ -1,38 +1,47 @@
+import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import { useRecoilState } from "recoil";
 import getUser from "../api/get-user";
 import createUser from "../api/utils/createUser";
-import { User, UserCreate } from "../client";
-import { currentUserInfo } from "../recoil/atom";
+import { UserCreate } from "../client";
+import { currentUser } from "../recoil/atom";
 
 const LogInScreen = () => {
-  const [, setUser] = useRecoilState(currentUserInfo);
-  const [username, setUsername] = useState("");
-  const { refetch } = useQuery<User>(
-    ["user", username],
-    () => getUser(username),
-    {
-      enabled: false,
-      onSuccess: (data) => {
-        setUser({ userID: data.id, username: data.username });
-      },
-    }
-  );
-  const { mutate } = useMutation(createUser, {
-    onSuccess: (data) => {
-      const res = data.data;
-      setUser({ userID: res.id, username: res.username });
-    },
-    onError: () => {
-      refetch();
+  const [, setUser] = useRecoilState(currentUser);
+  const [usernameInput, setUsernameInput] = useState("");
+
+  const { mutate: createUserMutate } = useMutation(createUser, {
+    onSuccess: ({ data: user }) => setUser(user),
+    onError: (e) => {
+      console.error(e);
     },
   });
 
-  const submitNewUser = (data: UserCreate) => {
-    mutate(data.username);
+  const usernameIsValid = (username: string) => {
+    return username != null && username.trim().length > 0;
+  };
+
+  // Login if user with username exists, otherwise create user first
+  const loginOrSignup = ({ username }: UserCreate) => {
+    const sanitizedUsername = username.trim();
+    if (!usernameIsValid(sanitizedUsername)) {
+      return;
+    }
+    getUser(sanitizedUsername)
+      .then(setUser)
+      .catch((reason: AxiosError) => {
+        switch (reason.response?.status) {
+          case 404: // Not Found
+            createUserMutate(sanitizedUsername);
+            break;
+          default:
+            console.error(reason.message);
+            break;
+        }
+      });
   };
   return (
     <View style={styles.container}>
@@ -40,15 +49,15 @@ const LogInScreen = () => {
         <TextInput
           style={styles.loginUsernameInput}
           label="Username"
-          value={username}
+          value={usernameInput}
           autoCapitalize="none"
           autoCorrect={false}
-          onChangeText={(text) => setUsername(text)}
+          onChangeText={(text) => setUsernameInput(text)}
         />
       </View>
       <Button
         mode="contained"
-        onPress={() => submitNewUser({ username })}
+        onPress={() => loginOrSignup({ username: usernameInput })}
         style={styles.loginButton}
         icon={"login"}
       >

@@ -1,5 +1,6 @@
 import { atom } from "recoil";
 import { LocationObject } from "expo-location";
+import { User } from "../client";
 
 const defaultLocation: LocationObject = {
   timestamp: Date.now(),
@@ -19,17 +20,7 @@ export const currentLocation = atom({
   default: defaultLocation, // default value (aka initial value)
 });
 
-interface UserInfo {
-  username: null | string;
-  userID: null | string;
-}
-
-const defaultUserInfo: UserInfo = {
-  username: null,
-  userID: null,
-};
-
-export const currentUserInfo = atom({
-  key: "currentUserInfo",
-  default: defaultUserInfo,
+export const currentUser = atom<User | null>({
+  key: "currentUser",
+  default: null,
 });

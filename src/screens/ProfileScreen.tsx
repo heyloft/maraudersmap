@@ -2,26 +2,34 @@ import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Button } from "react-native-paper";
 import { useRecoilState } from "recoil";
-import { currentUserInfo } from "../recoil/atom";
+import ErrorAlert from "../components/ErrorAlert";
+import { currentUser } from "../recoil/atom";
 
 const ProfileScreen = () => {
-  const [user, setUser] = useRecoilState(currentUserInfo);
+  const [user, setUser] = useRecoilState(currentUser);
   return (
     <View style={styles.container}>
-      <Text>
-        Logged in as <Text style={{ fontWeight: "bold" }}>{user.username}</Text>
-      </Text>
-      <Text style={{ color: "#aaa", fontSize: 12 }}>({user.userID})</Text>
-      <Button
-        style={styles.logoutButton}
-        mode="contained"
-        color="red"
-        onPress={() => setUser({ userID: null, username: null })}
-        icon="logout"
-        contentStyle={{ flexDirection: "row-reverse" }}
-      >
-        <Text style={styles.logoutButtonText}>Log out</Text>
-      </Button>
+      {user ? (
+        <>
+          <Text>
+            Logged in as{" "}
+            <Text style={{ fontWeight: "bold" }}>{user.username}</Text>
+          </Text>
+          <Text style={{ color: "#aaa", fontSize: 12 }}>({user.id})</Text>
+          <Button
+            style={styles.logoutButton}
+            mode="contained"
+            color="red"
+            onPress={() => setUser(null)}
+            icon="logout"
+            contentStyle={{ flexDirection: "row-reverse" }}
+          >
+            <Text style={styles.logoutButtonText}>Log out</Text>
+          </Button>
+        </>
+      ) : (
+        <ErrorAlert>Not logged in</ErrorAlert>
+      )}
     </View>
   );
 };
