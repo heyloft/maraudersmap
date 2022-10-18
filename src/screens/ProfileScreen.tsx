@@ -11,6 +11,7 @@ const ProfileScreen = () => {
       <Text>
         Logged in as <Text style={{ fontWeight: "bold" }}>{user.username}</Text>
       </Text>
+      <Text style={{ color: "#aaa", fontSize: 12 }}>({user.userID})</Text>
       <Button
         style={styles.logoutButton}
         mode="contained"
