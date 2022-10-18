@@ -10,5 +10,7 @@ export type Quest = {
   active_from: string;
   active_to?: string;
   unlock_method: UnlockMethod;
+  location: Array<any>;
+  event_id: string;
   id: string;
 };

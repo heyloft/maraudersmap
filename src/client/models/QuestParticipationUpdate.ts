@@ -2,12 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Quest } from "./Quest";
 import type { QuestStatus } from "./QuestStatus";
-import type { User } from "./User";
 
-export type QuestParticipation = {
+export type QuestParticipationUpdate = {
   status: QuestStatus;
-  quest: Quest;
-  user: User;
 };
