@@ -21,10 +21,12 @@ export const currentLocation = atom({
 
 interface UserInfo {
   username: null | string;
+  userID: null | string;
 }
 
 const defaultUserInfo: UserInfo = {
   username: null,
+  userID: null,
 };
 
 export const currentUserInfo = atom({
