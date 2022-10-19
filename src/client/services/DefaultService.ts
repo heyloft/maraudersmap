@@ -3,7 +3,9 @@
 /* eslint-disable */
 import type { Event } from "../models/Event";
 import type { EventCreate } from "../models/EventCreate";
+import type { EventParticipation } from "../models/EventParticipation";
 import type { EventParticipationCreate } from "../models/EventParticipationCreate";
+import type { EventParticipationUpdate } from "../models/EventParticipationUpdate";
 import type { Item } from "../models/Item";
 import type { ItemCreate } from "../models/ItemCreate";
 import type { ItemOwnership } from "../models/ItemOwnership";
@@ -12,6 +14,8 @@ import type { Quest } from "../models/Quest";
 import type { QuestCreate } from "../models/QuestCreate";
 import type { QuestDependencyBase } from "../models/QuestDependencyBase";
 import type { QuestDependencyCreate } from "../models/QuestDependencyCreate";
+import type { QuestItem } from "../models/QuestItem";
+import type { QuestItemCreate } from "../models/QuestItemCreate";
 import type { QuestParticipation } from "../models/QuestParticipation";
 import type { QuestParticipationCreate } from "../models/QuestParticipationCreate";
 import type { QuestParticipationUpdate } from "../models/QuestParticipationUpdate";
@@ -379,6 +383,60 @@ export class DefaultService {
   }
 
   /**
+   * Read Quest Items
+   * @param questId
+   * @param skip
+   * @param limit
+   * @returns QuestItem Successful Response
+   * @throws ApiError
+   */
+  public static readQuestItemsQuestsQuestIdItemsGet(
+    questId: string,
+    skip?: number,
+    limit: number = 100
+  ): CancelablePromise<Array<QuestItem>> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/quests/{quest_id}/items",
+      path: {
+        quest_id: questId,
+      },
+      query: {
+        skip: skip,
+        limit: limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Create Quest Item
+   * @param questId
+   * @param requestBody
+   * @returns QuestItem Successful Response
+   * @throws ApiError
+   */
+  public static createQuestItemQuestsQuestIdItemsPost(
+    questId: string,
+    requestBody: QuestItemCreate
+  ): CancelablePromise<QuestItem> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/quests/{quest_id}/items/",
+      path: {
+        quest_id: questId,
+      },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
    * Create Quest
    * @param requestBody
    * @returns Quest Successful Response
@@ -424,12 +482,40 @@ export class DefaultService {
    * @returns EventParticipationCreate Successful Response
    * @throws ApiError
    */
-  public static createEventParticipationEventParticipationPost(
+  public static createEventParticipationEventParticipationsPost(
     requestBody: EventParticipationCreate
   ): CancelablePromise<EventParticipationCreate> {
     return __request(OpenAPI, {
       method: "POST",
-      url: "/eventParticipation/",
+      url: "/eventParticipations/",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Update Event Participation
+   * @param userId
+   * @param eventId
+   * @param requestBody
+   * @returns EventParticipation Successful Response
+   * @throws ApiError
+   */
+  public static updateEventParticipationEventParticipationsUserIdEventIdPut(
+    userId: string,
+    eventId: string,
+    requestBody: EventParticipationUpdate
+  ): CancelablePromise<EventParticipation> {
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/eventParticipations/{user_id}/{event_id}",
+      path: {
+        user_id: userId,
+        event_id: eventId,
+      },
       body: requestBody,
       mediaType: "application/json",
       errors: {
