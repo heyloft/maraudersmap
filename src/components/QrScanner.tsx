@@ -9,11 +9,24 @@ import {
 import { BarCodeScanner } from "expo-barcode-scanner";
 import QuestCompletedModal from "./QuestCompletedModal";
 import { Provider } from "react-native-paper";
+import { useRecoilState } from "recoil";
+import { currentUser } from "../recoil/atom";
+import { useMutation } from "react-query";
+import createItemOwnership from "../api/create-item-ownership";
 
 export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState<boolean>(false);
   const [hasCompletedQuest, setQuestCompleted] = useState<boolean>(false);
+  const [user] = useRecoilState(currentUser);
+  const { mutate: itemOwnershipMutation } = useMutation(createItemOwnership, {
+    onSuccess: ({ data: ownership }) => {
+      alert(`You have unlocked ${ownership.item.title}🥳`);
+    },
+    onError: () => {
+      alert("Opps! Something went wrong");
+    },
+  });
 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
@@ -24,16 +37,15 @@ export default function QrScanner() {
     getBarCodeScannerPermissions();
   }, []);
 
-  const handleBarCodeScanned = ({
-    type,
-    data,
-  }: {
-    type: string;
-    data: string;
-  }) => {
+  const handleBarCodeScanned = ({ data }: { type: string; data: string }) => {
     setScanned(true);
     setQuestCompleted(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    if (user)
+      itemOwnershipMutation({
+        obtainedAt: new Date().toISOString(),
+        userId: user.id,
+        itemID: data,
+      });
   };
 
   return (
