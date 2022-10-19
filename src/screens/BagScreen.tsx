@@ -1,28 +1,68 @@
 import React from "react";
-import { View, Text, StyleSheet, SectionList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SectionList,
+  ActivityIndicator,
+} from "react-native";
+import { useQuery } from "react-query";
+import getItemOwnerships from "../api/get-item-ownerships";
+import { ItemOwnership } from "../client";
 
 const BagScreen = () => {
+  const { data, isLoading, isError } = useQuery<ItemOwnership[]>(
+    "item-ownerships",
+    getItemOwnerships
+  );
+
   const DATA = [
     {
+      title: "Keys",
+      data: data
+        ? data.filter((itemOwnership) => itemOwnership.item.item_type === 2)
+        : [],
+    },
+    {
       title: "Collectibles",
-      data: ["Ancient T-shirt", "Hotel Whiskey", "Victor Golf"],
+      data: data
+        ? data.filter((itemOwnership) => itemOwnership.item.item_type === 1)
+        : [],
     },
   ];
 
-  const Item = ({ title }: { title: string }) => (
+  const Item = ({
+    title,
+    description,
+  }: {
+    title: string;
+    description: string | undefined;
+  }) => (
     <View style={styles.item}>
       <Text style={styles.title}>{title}</Text>
-      <Text style={styles.subtitle}>{title}</Text>
+      <Text style={styles.subtitle}>
+        {description ? description : "This is an item"}
+      </Text>
     </View>
   );
+
+  if (isLoading) {
+    <ActivityIndicator animating={true} color={"purple"} />;
+  }
+
+  if (isError) {
+    <Text>Error getting items:(</Text>;
+  }
 
   return (
     <View>
       <View style={styles.container}>
         <SectionList
           sections={DATA}
-          keyExtractor={(item, index) => item + index}
-          renderItem={({ item }) => <Item title={item} />}
+          keyExtractor={(item, index) => item.id + index}
+          renderItem={({ item }) => (
+            <Item title={item.item.title} description={item.item.description} />
+          )}
           renderSectionHeader={({ section: { title } }) => (
             <Text style={styles.header}>{title}</Text>
           )}
