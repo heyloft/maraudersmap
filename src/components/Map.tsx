@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
 import MapView, { MAP_TYPES, Marker, UrlTile } from "react-native-maps";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { LocationObject } from "expo-location";
 import { locationSetup } from "../location/location";
-import { currentLocation } from "../recoil/atom";
+import { currentLocation, userQuestsState } from "../recoil/atom";
 import { useQuery } from "react-query";
 import { FontAwesome5, AntDesign } from "@expo/vector-icons";
 import { TILE_URL_TEMPLATE } from "@env";
 import MarkerCard from "./MarkerCard";
-import { Item } from "../client";
-import fetchItems from "../api/fetch-items";
+import { QuestItem } from "../client";
 import { IconButton } from "react-native-paper";
 import { locationUnlock } from "../location/locationUnlock";
 import { currentUser } from "../recoil/atom";
+import { getQuestItems } from "../api/quests";
 
 enum MarkerType {
   POI = "POI",
@@ -21,21 +21,30 @@ enum MarkerType {
 }
 
 const Map = () => {
+  const MIN_ZOOM_LEVEL = 17;
+  const MAX_ZOOM_LEVEL = 21;
+  const map = useRef<MapView | null>(null);
+  const [location, setLocation] = useRecoilState(currentLocation);
+  const [focusUserLocation, setFocusUserLocation] = useState(true);
   const [selectedMarker, setSelectedMarker] = useState<null | {
     id: string;
     markerType: MarkerType;
   }>(null);
   const [animateToCoordinate, setAnimateToCoordinate] = useState(false);
-  const map = useRef<MapView | null>(null);
   const [user] = useRecoilState(currentUser);
+  const userQuests = useRecoilValue(userQuestsState);
 
-  //TODO: Add error handling from api-fetches and maybe loading indication
-  const { data: items } = useQuery<Item[], Error>("items", fetchItems);
-
-  const MIN_ZOOM_LEVEL = 17;
-  const MAX_ZOOM_LEVEL = 21;
-  const [location, setLocation] = useRecoilState(currentLocation);
-  const [focusUserLocation, setFocusUserLocation] = useState(true);
+  const { data: questItems } = useQuery<QuestItem[], Error>(
+    ["questItems", userQuests],
+    async () => {
+      if (userQuests == null) {
+        return [];
+      }
+      return (
+        await Promise.all(userQuests.map((q) => getQuestItems(q.quest.id)))
+      ).flat();
+    }
+  );
 
   const onPositionChange = (newLocation: LocationObject) => {
     setLocation(newLocation);
@@ -61,7 +70,7 @@ const Map = () => {
     if (!selectedMarker) return null;
     return selectedMarker.markerType == MarkerType.POI
       ? null
-      : items?.find((item) => item.id == selectedMarker.id);
+      : questItems?.find((item) => item.id == selectedMarker.id);
   };
 
   useEffect(() => {
@@ -70,8 +79,8 @@ const Map = () => {
     if (!marker) return;
     map?.current?.animateToRegion(
       {
-        latitude: 0, //marker.position[0],
-        longitude: 0, //marker.position[1],
+        latitude: marker.location[0],
+        longitude: marker.location[1],
         latitudeDelta: 0,
         longitudeDelta: 0,
       },
@@ -119,12 +128,12 @@ const Map = () => {
           </Marker>
         )}
 
-        {items?.map((item) => (
+        {questItems?.map((item) => (
           <Marker
             key={`item:${item.id}`}
             coordinate={{
-              latitude: 0, //item.position[0],
-              longitude: 0, //</MapView>item.position[1],
+              latitude: item.location[0],
+              longitude: item.location[1],
             }}
             onPress={() => {
               setSelectedMarker({ id: item.id, markerType: MarkerType.ITEM });
@@ -135,7 +144,7 @@ const Map = () => {
               name="star"
               size={
                 selectedMarker?.id == item.id &&
-                selectedMarker.markerType == MarkerType.ITEM
+                  selectedMarker?.markerType == MarkerType.ITEM
                   ? 50
                   : 30
               }
@@ -159,8 +168,8 @@ const Map = () => {
       />
       {selectedMarker != null ? (
         <MarkerCard
-          title={getSelectedMarker()?.title}
-          description={getSelectedMarker()?.description}
+          title={getSelectedMarker()?.item.title}
+          description={getSelectedMarker()?.item.description}
           resetSelectedMarker={() => setSelectedMarker(null)}
         />
       ) : null}

@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 import { LocationObject } from "expo-location";
-import { User } from "../client";
+import { User, Event, QuestParticipation } from "../client";
 
 const defaultLocation: LocationObject = {
   timestamp: Date.now(),
@@ -22,5 +22,15 @@ export const currentLocation = atom({
 
 export const currentUser = atom<User | null>({
   key: "currentUser",
+  default: null,
+});
+
+export const currentEventState = atom<Event | null>({
+  key: "currentEvent",
+  default: null,
+});
+
+export const userQuestsState = atom<QuestParticipation[] | null>({
+  key: "userQuests",
   default: null,
 });
