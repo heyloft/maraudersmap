@@ -6,7 +6,7 @@ import { LocationObject } from "expo-location";
 import { locationSetup } from "../location/location";
 import { currentLocation } from "../recoil/atom";
 import { useQuery } from "react-query";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, AntDesign } from "@expo/vector-icons";
 import { TILE_URL_TEMPLATE } from "@env";
 import MarkerCard from "./MarkerCard";
 import { Item } from "../client";
@@ -70,8 +70,8 @@ const Map = () => {
     if (!marker) return;
     map?.current?.animateToRegion(
       {
-        latitude: marker.position[0],
-        longitude: marker.position[1],
+        latitude: 0, //marker.position[0],
+        longitude: 0, //marker.position[1],
         latitudeDelta: 0,
         longitudeDelta: 0,
       },
@@ -118,6 +118,31 @@ const Map = () => {
             <FontAwesome5 name="dot-circle" size={24} color="#1E88E5" />
           </Marker>
         )}
+
+        {items?.map((item) => (
+          <Marker
+            key={`item:${item.id}`}
+            coordinate={{
+              latitude: 0, //item.position[0],
+              longitude: 0, //</MapView>item.position[1],
+            }}
+            onPress={() => {
+              setSelectedMarker({ id: item.id, markerType: MarkerType.ITEM });
+              setAnimateToCoordinate(true);
+            }}
+          >
+            <AntDesign
+              name="star"
+              size={
+                selectedMarker?.id == item.id &&
+                selectedMarker.markerType == MarkerType.ITEM
+                  ? 50
+                  : 30
+              }
+              color="hotpink"
+            />
+          </Marker>
+        ))}
       </MapView>
       <IconButton
         style={{
