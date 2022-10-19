@@ -6,13 +6,14 @@ import { LocationObject } from "expo-location";
 import { locationSetup } from "../location/location";
 import { currentLocation } from "../recoil/atom";
 import { useQuery } from "react-query";
-import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { TILE_URL_TEMPLATE } from "@env";
 import MarkerCard from "./MarkerCard";
 import { Item } from "../client";
 import fetchItems from "../api/fetch-items";
 import { IconButton } from "react-native-paper";
 import { locationUnlock } from "../location/locationUnlock";
+import { currentUser } from "../recoil/atom";
 
 enum MarkerType {
   POI = "POI",
@@ -26,6 +27,7 @@ const Map = () => {
   }>(null);
   const [animateToCoordinate, setAnimateToCoordinate] = useState(false);
   const map = useRef<MapView | null>(null);
+  const [user] = useRecoilState(currentUser);
 
   //TODO: Add error handling from api-fetches and maybe loading indication
   const { data: items } = useQuery<Item[], Error>("items", fetchItems);
@@ -37,7 +39,7 @@ const Map = () => {
 
   const onPositionChange = (newLocation: LocationObject) => {
     setLocation(newLocation);
-    locationUnlock(newLocation);
+    if (user) locationUnlock(newLocation, user.id);
   };
 
   useEffect(() => {
@@ -57,7 +59,9 @@ const Map = () => {
 
   const getSelectedMarker = () => {
     if (!selectedMarker) return null;
-    return items?.find((item) => item.id == selectedMarker.id);
+    return selectedMarker.markerType == MarkerType.POI
+      ? null
+      : items?.find((item) => item.id == selectedMarker.id);
   };
 
   useEffect(() => {
@@ -114,31 +118,6 @@ const Map = () => {
             <FontAwesome5 name="dot-circle" size={24} color="#1E88E5" />
           </Marker>
         )}
-
-        {items?.map((item) => (
-          <Marker
-            key={`item:${item.id}`}
-            coordinate={{
-              latitude: item.position[0],
-              longitude: item.position[1],
-            }}
-            onPress={() => {
-              setSelectedMarker({ id: item.id, markerType: MarkerType.ITEM });
-              setAnimateToCoordinate(true);
-            }}
-          >
-            <AntDesign
-              name="star"
-              size={
-                selectedMarker?.id == item.id &&
-                selectedMarker.markerType == MarkerType.ITEM
-                  ? 50
-                  : 30
-              }
-              color="hotpink"
-            />
-          </Marker>
-        ))}
       </MapView>
       <IconButton
         style={{
