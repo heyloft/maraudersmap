@@ -3,7 +3,6 @@ import axios from "axios";
 
 const genericPost = async (endpoint: string, data: object) => {
   //TODO: Replace data type
-  console.log(data);
 
   return axios.post(BASE_URL + endpoint, data);
 };
