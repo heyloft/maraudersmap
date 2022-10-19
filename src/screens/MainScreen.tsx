@@ -73,6 +73,7 @@ const MainScreen = () => {
           tabBarIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faBriefcase} color={color} size={size} />
           ),
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen
