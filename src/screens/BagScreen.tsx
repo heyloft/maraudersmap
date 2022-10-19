@@ -61,6 +61,11 @@ const BagScreen = () => {
     <View>
       <View style={styles.container}>
         <SectionList
+          renderSectionFooter={({ section }) =>
+            section.data.length ? null : (
+              <Text>You have no {section.title.toLowerCase()}</Text>
+            )
+          }
           sections={DATA}
           keyExtractor={(item, index) => item.id + index}
           renderItem={({ item }) => (
