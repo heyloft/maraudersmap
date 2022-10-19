@@ -3,14 +3,19 @@ import { View, Text, StyleSheet, SectionList } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { QuestStackParamList } from "./QuestNavigator";
 import { Pressable } from "react-native";
+import { useRecoilValue } from "recoil";
+import { userQuestsState } from "../recoil/atom";
+import { QuestParticipation } from "../client";
 
 const QuestLogScreen = ({
   navigation,
 }: NativeStackScreenProps<QuestStackParamList, "Quest log">) => {
-  const DATA = [
+  const userQuests = useRecoilValue(userQuestsState);
+
+  const DATA: { title: string; data: QuestParticipation[] }[] = [
     {
-      title: "Available Quests",
-      data: ["Foxtrot Alpha", "Hotel Whiskey", "Victor Golf"],
+      title: "Active Quests",
+      data: userQuests ?? [],
     },
   ];
 
@@ -26,10 +31,10 @@ const QuestLogScreen = ({
       <View style={styles.container}>
         <SectionList
           sections={DATA}
-          keyExtractor={(item, index) => item + index}
+          keyExtractor={(item) => `${item.quest.id}:${item.user.id}`}
           renderItem={({ item }) => (
             <Pressable onPress={() => navigation.navigate("Quest")}>
-              <Item title={item} />
+              <Item title={item.quest.title} />
             </Pressable>
           )}
           renderSectionHeader={({ section: { title } }) => (
