@@ -135,7 +135,7 @@ const Map = () => {
               name="star"
               size={
                 selectedMarker?.id == item.id &&
-                  selectedMarker.markerType == MarkerType.ITEM
+                selectedMarker.markerType == MarkerType.ITEM
                   ? 50
                   : 30
               }

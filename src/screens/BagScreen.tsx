@@ -16,7 +16,7 @@ const BagScreen = () => {
   const [user] = useRecoilState(currentUser);
   const { data, isLoading, isError } = useQuery<ItemOwnership[]>(
     ["item-ownerships", user?.id],
-    () => getItemOwnerships(user ? user.id : "asd") //Very quick fix for potensial null value for user
+    () => (user ? getItemOwnerships(user.id) : []) //TODO: Better handling of null user
   );
 
   const DATA = [
@@ -50,11 +50,11 @@ const BagScreen = () => {
   );
 
   if (isLoading) {
-    <ActivityIndicator animating={true} color={"purple"} />;
+    return <ActivityIndicator animating={true} color={"purple"} />;
   }
 
   if (isError) {
-    <Text>Error getting items:(</Text>;
+    return <Text>Error getting items:(</Text>;
   }
 
   return (
