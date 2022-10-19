@@ -7,13 +7,16 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useQuery } from "react-query";
+import { useRecoilState } from "recoil";
 import getItemOwnerships from "../api/get-item-ownerships";
 import { ItemOwnership } from "../client";
+import { currentUser } from "../recoil/atom";
 
 const BagScreen = () => {
+  const [user] = useRecoilState(currentUser);
   const { data, isLoading, isError } = useQuery<ItemOwnership[]>(
-    "item-ownerships",
-    getItemOwnerships
+    ["item-ownerships", user?.id],
+    () => getItemOwnerships(user ? user.id : "asd") //Very quick fix for potensial null value for user
   );
 
   const DATA = [
