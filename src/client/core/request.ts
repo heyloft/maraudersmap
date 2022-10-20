@@ -1,6 +1,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import axios from "axios";
+import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import FormData from "form-data";
+
 import { ApiError } from "./ApiError";
 import type { ApiRequestOptions } from "./ApiRequestOptions";
 import type { ApiResult } from "./ApiResult";
@@ -37,6 +41,10 @@ const isBlob = (value: any): value is Blob => {
 
 const isFormData = (value: any): value is FormData => {
   return value instanceof FormData;
+};
+
+const isSuccess = (status: number): boolean => {
+  return status >= 200 && status < 300;
 };
 
 const base64 = (str: string): string => {
@@ -142,17 +150,22 @@ const resolve = async <T>(
 
 const getHeaders = async (
   config: OpenAPIConfig,
-  options: ApiRequestOptions
-): Promise<Headers> => {
+  options: ApiRequestOptions,
+  formData?: FormData
+): Promise<Record<string, string>> => {
   const token = await resolve(options, config.TOKEN);
   const username = await resolve(options, config.USERNAME);
   const password = await resolve(options, config.PASSWORD);
   const additionalHeaders = await resolve(options, config.HEADERS);
+  const formHeaders =
+    (typeof formData?.getHeaders === "function" && formData?.getHeaders()) ||
+    {};
 
   const headers = Object.entries({
     Accept: "application/json",
     ...additionalHeaders,
     ...options.headers,
+    ...formHeaders,
   })
     .filter(([_, value]) => isDefined(value))
     .reduce(
@@ -184,59 +197,55 @@ const getHeaders = async (
     }
   }
 
-  return new Headers(headers);
+  return headers;
 };
 
 const getRequestBody = (options: ApiRequestOptions): any => {
   if (options.body) {
-    if (options.mediaType?.includes("/json")) {
-      return JSON.stringify(options.body);
-    } else if (
-      isString(options.body) ||
-      isBlob(options.body) ||
-      isFormData(options.body)
-    ) {
-      return options.body;
-    } else {
-      return JSON.stringify(options.body);
-    }
+    return options.body;
   }
   return undefined;
 };
 
-export const sendRequest = async (
+const sendRequest = async <T>(
   config: OpenAPIConfig,
   options: ApiRequestOptions,
   url: string,
   body: any,
   formData: FormData | undefined,
-  headers: Headers,
+  headers: Record<string, string>,
   onCancel: OnCancel
-): Promise<Response> => {
-  const controller = new AbortController();
+): Promise<AxiosResponse<T>> => {
+  const source = axios.CancelToken.source();
 
-  const request: RequestInit = {
+  const requestConfig: AxiosRequestConfig = {
+    url,
     headers,
-    body: body ?? formData,
+    data: body ?? formData,
     method: options.method,
-    signal: controller.signal,
+    withCredentials: config.WITH_CREDENTIALS,
+    cancelToken: source.token,
   };
 
-  if (config.WITH_CREDENTIALS) {
-    request.credentials = config.CREDENTIALS;
+  onCancel(() => source.cancel("The user aborted a request."));
+
+  try {
+    return await axios.request(requestConfig);
+  } catch (error) {
+    const axiosError = error as AxiosError<T>;
+    if (axiosError.response) {
+      return axiosError.response;
+    }
+    throw error;
   }
-
-  onCancel(() => controller.abort());
-
-  return await fetch(url, request);
 };
 
 const getResponseHeader = (
-  response: Response,
+  response: AxiosResponse<any>,
   responseHeader?: string
 ): string | undefined => {
   if (responseHeader) {
-    const content = response.headers.get(responseHeader);
+    const content = response.headers[responseHeader];
     if (isString(content)) {
       return content;
     }
@@ -244,21 +253,9 @@ const getResponseHeader = (
   return undefined;
 };
 
-const getResponseBody = async (response: Response): Promise<any> => {
+const getResponseBody = (response: AxiosResponse<any>): any => {
   if (response.status !== 204) {
-    try {
-      const contentType = response.headers.get("Content-Type");
-      if (contentType) {
-        const isJSON = contentType.toLowerCase().startsWith("application/json");
-        if (isJSON) {
-          return await response.json();
-        } else {
-          return await response.text();
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    return response.data;
   }
   return undefined;
 };
@@ -304,10 +301,10 @@ export const request = <T>(
       const url = getUrl(config, options);
       const formData = getFormData(options);
       const body = getRequestBody(options);
-      const headers = await getHeaders(config, options);
+      const headers = await getHeaders(config, options, formData);
 
       if (!onCancel.isCancelled) {
-        const response = await sendRequest(
+        const response = await sendRequest<T>(
           config,
           options,
           url,
@@ -316,7 +313,7 @@ export const request = <T>(
           headers,
           onCancel
         );
-        const responseBody = await getResponseBody(response);
+        const responseBody = getResponseBody(response);
         const responseHeader = getResponseHeader(
           response,
           options.responseHeader
@@ -324,7 +321,7 @@ export const request = <T>(
 
         const result: ApiResult = {
           url,
-          ok: response.ok,
+          ok: isSuccess(response.status),
           status: response.status,
           statusText: response.statusText,
           body: responseHeader ?? responseBody,

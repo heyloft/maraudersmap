@@ -10,7 +10,7 @@
     "prepare": "husky install .husky",
     "lint": "eslint --fix $INIT_CWD",
     "format": "prettier --write $INIT_CWD",
-    "codegen": "dotenv -- bash -c 'openapi --input $URL_CODEGEN --output ./src/client --client fetch && prettier --write ./src/client'"
+    "codegen": "dotenv -- bash -c 'openapi --input $URL_CODEGEN --output ./src/client --client axios && prettier --write ./src/client'"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
