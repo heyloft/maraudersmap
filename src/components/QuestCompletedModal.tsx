@@ -1,17 +1,21 @@
-import { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Modal, Portal, Text, Button } from "react-native-paper";
 import ConfettiCannon from "react-native-confetti-cannon";
+import { Quest } from "../client";
 
-const QuestCompletedModal = () => {
-  const [visible, setVisible] = useState(false);
-
+const QuestCompletedModal = ({
+  quest,
+  onDismiss,
+}: {
+  quest: Quest;
+  onDismiss: () => void;
+}) => {
   return (
     <>
       <Portal>
         <Modal
-          visible={visible}
-          onDismiss={() => setVisible(false)}
+          visible={quest != null}
+          onDismiss={onDismiss}
           contentContainerStyle={styles.modalContainer}
         >
           <ConfettiCannon
@@ -26,21 +30,14 @@ const QuestCompletedModal = () => {
               Quest Completed!
             </Text>
             <Text style={{ fontSize: 20, textAlign: "center", margin: 15 }}>
-              Congratulations! You have completed the Gathering of Easter Eggs.
+              Congratulations! You have completed &apos;{quest.title}&apos;.
             </Text>
-            <Button
-              mode="contained"
-              onPress={() => setVisible(false)}
-              color="green"
-            >
+            <Button mode="contained" onPress={onDismiss} color="green">
               Continue
             </Button>
           </View>
         </Modal>
       </Portal>
-      <Button style={{ marginTop: 30 }} onPress={() => setVisible(true)}>
-        Show
-      </Button>
     </>
   );
 };

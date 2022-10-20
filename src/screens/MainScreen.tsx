@@ -24,6 +24,7 @@ import {
 } from "../recoil/atom";
 import { useQuery } from "react-query";
 import { QuestParticipation } from "../client";
+import { isRegisteredToEvent, registerUserToEvent } from "../api/events";
 
 export type RootStackParamList = {
   Map: undefined;
@@ -44,7 +45,19 @@ const MainScreen = () => {
 
   // TODO: Fetching first event for now, should be changed later
   useEffect(() => {
-    getOneEvent().then(setCurrentEvent);
+    getOneEvent().then((e) => {
+      if (e) {
+        setCurrentEvent(e);
+        if (user) {
+          isRegisteredToEvent(user.id, e.id).then((isRegistered) => {
+            if (isRegistered) {
+              return;
+            }
+            registerUserToEvent(user.id, e.id);
+          });
+        }
+      }
+    });
   }, []);
 
   const { data: userQuests } = useQuery<QuestParticipation[], Error>(
@@ -68,6 +81,7 @@ const MainScreen = () => {
           tabBarIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faMap} color={color} size={size} />
           ),
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen
@@ -83,7 +97,8 @@ const MainScreen = () => {
             />
           ),
           headerShown: false,
-          tabBarBadge: 3,
+          // tabBarBadge: 3,
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen
@@ -94,6 +109,7 @@ const MainScreen = () => {
           tabBarIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faQrcode} color={color} size={size} />
           ),
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen

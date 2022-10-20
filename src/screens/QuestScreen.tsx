@@ -1,61 +1,37 @@
 import React from "react";
 import { Provider } from "react-native-paper";
-import InduvidualQuest, { QuestItem } from "../components/InduvidualQuest";
+import QuestDetails from "../components/QuestDetails";
 import AbandonQuestDialog from "../components/AbandonQuestDialog";
 import { useState } from "react";
-
-// Some hardcoded questitems. Can be used for testing.
-
-const hiddenKey: QuestItem = {
-  title: "Hidden Key",
-  description: "To enter you have to find the hidden key.",
-  steps: [
-    ["Defeat cave troll", true],
-    ["Win quidditch match", true],
-    ["kajfk", false],
-  ],
-};
-
-const questItem2: QuestItem = {
-  title: "Quest Item 2",
-  description: "To enter you have to find the hidden key.",
-  steps: [
-    ["Defeat cave troll", true],
-    ["Win quidditch match", false],
-  ],
-};
-
-const questItem3: QuestItem = {
-  title: "Quest Item 3",
-  description: "To enter you have to find the hidden key.",
-  steps: [
-    ["Defeat cave troll", false],
-    ["Win quidditch match", false],
-  ],
-};
+import { useRecoilValue } from "recoil";
+import {
+  questScreenVisibleQuestState,
+  userQuestsProgressState,
+} from "../recoil/atom";
 
 const QuestScreen = () => {
   const [showAbandonDialog, setShowAbandonDialog] = useState<boolean>(false);
+  const questScreenVisibleQuest = useRecoilValue(questScreenVisibleQuestState);
+  const userQuestsProgress = useRecoilValue(userQuestsProgressState);
+
   return (
-    <Provider>
-      <AbandonQuestDialog
-        visible={showAbandonDialog}
-        setVisible={setShowAbandonDialog}
-      />
-      <InduvidualQuest
-        showDialog={() => setShowAbandonDialog(true)}
-        title="Gathering of Easter Eggs"
-        description="This is a colourful description of the Gathering of Easter Eggs quest. This is
-        a colourful description of the Gathering of Easter Eggs quest. This is a colourful 
-        description of the Gathering of Easter Eggs quest."
-        date={new Date()}
-        possibleRewards={[
-          "Ancient T-Shirt of Disillusionment",
-          "Vessel of RottenGlory",
-        ]}
-        questItems={[hiddenKey, questItem2, questItem3]}
-      ></InduvidualQuest>
-    </Provider>
+    questScreenVisibleQuest && (
+      <Provider>
+        <AbandonQuestDialog
+          visible={showAbandonDialog}
+          setVisible={setShowAbandonDialog}
+        />
+        <QuestDetails
+          showDialog={() => setShowAbandonDialog(true)}
+          questParticipation={questScreenVisibleQuest}
+          questProgress={
+            userQuestsProgress
+              ? userQuestsProgress[questScreenVisibleQuest.quest.id]
+              : null
+          }
+        ></QuestDetails>
+      </Provider>
+    )
   );
 };
 

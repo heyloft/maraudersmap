@@ -34,3 +34,20 @@ export const userQuestsState = atom<QuestParticipation[] | null>({
   key: "userQuests",
   default: null,
 });
+
+export type QuestParticipationProgress = {
+  total: number;
+  progress: number;
+};
+
+export const userQuestsProgressState = atom<{
+  [key: string]: QuestParticipationProgress;
+} | null>({
+  key: "userQuestsProgress",
+  default: null,
+});
+
+export const questScreenVisibleQuestState = atom<QuestParticipation | null>({
+  key: "questScreenVisibleQuest",
+  default: null,
+});

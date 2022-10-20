@@ -4,7 +4,11 @@ import MapView, { MAP_TYPES, Marker, UrlTile } from "react-native-maps";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { LocationObject } from "expo-location";
 import { locationSetup } from "../location/location";
-import { currentLocation, userQuestsState } from "../recoil/atom";
+import {
+  currentEventState,
+  currentLocation,
+  userQuestsState,
+} from "../recoil/atom";
 import { useQuery } from "react-query";
 import { FontAwesome5, AntDesign } from "@expo/vector-icons";
 import { TILE_URL_TEMPLATE } from "@env";
@@ -13,7 +17,7 @@ import { QuestItem } from "../client";
 import { IconButton } from "react-native-paper";
 import { locationUnlock } from "../location/locationUnlock";
 import { currentUser } from "../recoil/atom";
-import { getQuestItems } from "../api/quests";
+import { getQuestItems, getUserEventActiveQuests } from "../api/quests";
 
 enum MarkerType {
   POI = "POI",
@@ -31,8 +35,9 @@ const Map = () => {
     markerType: MarkerType;
   }>(null);
   const [animateToCoordinate, setAnimateToCoordinate] = useState(false);
-  const [user] = useRecoilState(currentUser);
-  const userQuests = useRecoilValue(userQuestsState);
+  const user = useRecoilValue(currentUser);
+  const [userQuests, setUserQuests] = useRecoilState(userQuestsState);
+  const currentEvent = useRecoilValue(currentEventState);
 
   const { data: questItems } = useQuery<QuestItem[], Error>(
     ["questItems", userQuests],
@@ -48,12 +53,25 @@ const Map = () => {
 
   const onPositionChange = (newLocation: LocationObject) => {
     setLocation(newLocation);
-    if (user) locationUnlock(newLocation, user.id);
+    if (user && currentEvent) {
+      locationUnlock(newLocation, user.id, currentEvent.id).then(
+        (someUnlocked) => {
+          if (someUnlocked && currentEvent) {
+            getUserEventActiveQuests(user.id, currentEvent.id).then(
+              setUserQuests
+            );
+          }
+        }
+      );
+    }
   };
 
   useEffect(() => {
+    // Caution! Remember that all state from recoil will be frozen upon listener setup
+    // That is we we have 'currentEvent' in the dependency list
+    // TODO: Remove subscribers when new ones are added, or just don't do it this way...
     locationSetup(onPositionChange);
-  }, []);
+  }, [currentEvent]);
 
   useEffect(() => {
     if (focusUserLocation && location) {
@@ -144,7 +162,7 @@ const Map = () => {
               name="star"
               size={
                 selectedMarker?.id == item.id &&
-                  selectedMarker?.markerType == MarkerType.ITEM
+                selectedMarker?.markerType == MarkerType.ITEM
                   ? 50
                   : 30
               }
