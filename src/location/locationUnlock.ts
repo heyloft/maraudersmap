@@ -1,7 +1,7 @@
 import { LocationObjectCoords, LocationObject } from "expo-location";
 import { sendNotification } from "../notifications/notifications";
 import { distance } from "./location";
-import { Quest, QuestParticipation } from "../client";
+import { Quest, QuestParticipation, QuestStatus } from "../client";
 import { fetchUnstartedQuests, updateQuestParticipation } from "../api/quests";
 
 const TRESHOLD = 20;
@@ -31,7 +31,7 @@ export const locationUnlock = async (
     if (dist < TRESHOLD) {
       sendNotification("Quest Unlocked ✨", `You unlocked '${qp.quest.title}'`);
       unlocked.push(qp.quest);
-      updateQuestParticipation(userID, qp.quest.id, 3);
+      updateQuestParticipation(userID, qp.quest.id, QuestStatus.ACTIVE);
     }
   });
   return unlocked.length > 0;

@@ -9,7 +9,8 @@ import {
 import { useQuery } from "react-query";
 import { useRecoilState } from "recoil";
 import { getItemOwnerships } from "../api/items";
-import { ItemOwnership } from "../client";
+import { ItemOwnership, ItemType } from "../client";
+import ErrorAlert from "../components/ErrorAlert";
 import { currentUser } from "../recoil/atom";
 
 const BagScreen = () => {
@@ -23,13 +24,18 @@ const BagScreen = () => {
     {
       title: "Keys",
       data: data
-        ? data.filter((itemOwnership) => itemOwnership.item.item_type === 2)
+        ? data.filter(
+            (itemOwnership) => itemOwnership.item.item_type === ItemType.KEY
+          )
         : [],
     },
     {
       title: "Collectibles",
       data: data
-        ? data.filter((itemOwnership) => itemOwnership.item.item_type === 1)
+        ? data.filter(
+            (itemOwnership) =>
+              itemOwnership.item.item_type === ItemType.COLLECTIBLE
+          )
         : [],
     },
   ];
@@ -60,21 +66,28 @@ const BagScreen = () => {
   return (
     <View>
       <View style={styles.container}>
-        <SectionList
-          renderSectionFooter={({ section }) =>
-            section.data.length ? null : (
-              <Text>You have no {section.title.toLowerCase()}</Text>
-            )
-          }
-          sections={DATA}
-          keyExtractor={(item, index) => item.id + index}
-          renderItem={({ item }) => (
-            <Item title={item.item.title} description={item.item.description} />
-          )}
-          renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.header}>{title}</Text>
-          )}
-        />
+        {user ? (
+          <SectionList
+            renderSectionFooter={({ section }) =>
+              section.data.length ? null : (
+                <Text>You have no {section.title.toLowerCase()}</Text>
+              )
+            }
+            sections={DATA}
+            keyExtractor={(item, index) => item.id + index}
+            renderItem={({ item }) => (
+              <Item
+                title={item.item.title}
+                description={item.item.description}
+              />
+            )}
+            renderSectionHeader={({ section: { title } }) => (
+              <Text style={styles.header}>{title}</Text>
+            )}
+          />
+        ) : (
+          <ErrorAlert>Not logged in</ErrorAlert>
+        )}
       </View>
     </View>
   );

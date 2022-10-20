@@ -33,7 +33,7 @@ export class DefaultService {
    * @returns string Successful Response
    * @throws ApiError
    */
-  public static indexGet(): CancelablePromise<string> {
+  public static index(): CancelablePromise<string> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/",
@@ -47,7 +47,7 @@ export class DefaultService {
    * @returns User Successful Response
    * @throws ApiError
    */
-  public static readUsersUsersGet(
+  public static readUsers(
     skip?: number,
     limit: number = 100
   ): CancelablePromise<Array<User>> {
@@ -70,9 +70,7 @@ export class DefaultService {
    * @returns User Successful Response
    * @throws ApiError
    */
-  public static createUserUsersPost(
-    requestBody: UserCreate
-  ): CancelablePromise<User> {
+  public static createUser(requestBody: UserCreate): CancelablePromise<User> {
     return __request(OpenAPI, {
       method: "POST",
       url: "/users/",
@@ -90,9 +88,7 @@ export class DefaultService {
    * @returns User Successful Response
    * @throws ApiError
    */
-  public static readUserUsersUserIdGet(
-    userId: string
-  ): CancelablePromise<User> {
+  public static readUser(userId: string): CancelablePromise<User> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/users/{user_id}",
@@ -111,9 +107,7 @@ export class DefaultService {
    * @returns User Successful Response
    * @throws ApiError
    */
-  public static readUserByUsernameUsersByUsernameUsernameGet(
-    username: string
-  ): CancelablePromise<User> {
+  public static readUserByUsername(username: string): CancelablePromise<User> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/users/by_username/{username}",
@@ -133,7 +127,7 @@ export class DefaultService {
    * @returns Item Successful Response
    * @throws ApiError
    */
-  public static readItemsItemsGet(
+  public static readItems(
     skip?: number,
     limit: number = 100
   ): CancelablePromise<Array<Item>> {
@@ -156,9 +150,7 @@ export class DefaultService {
    * @returns Item Successful Response
    * @throws ApiError
    */
-  public static createItemItemsPost(
-    requestBody: ItemCreate
-  ): CancelablePromise<Item> {
+  public static createItem(requestBody: ItemCreate): CancelablePromise<Item> {
     return __request(OpenAPI, {
       method: "POST",
       url: "/items/",
@@ -177,7 +169,7 @@ export class DefaultService {
    * @returns Event Successful Response
    * @throws ApiError
    */
-  public static readEventsEventsGet(
+  public static readEvents(
     skip?: number,
     limit: number = 100
   ): CancelablePromise<Array<Event>> {
@@ -200,7 +192,7 @@ export class DefaultService {
    * @returns Event Successful Response
    * @throws ApiError
    */
-  public static createEventEventsPost(
+  public static createEvent(
     requestBody: EventCreate
   ): CancelablePromise<Event> {
     return __request(OpenAPI, {
@@ -224,7 +216,7 @@ export class DefaultService {
    * @returns QuestParticipation Successful Response
    * @throws ApiError
    */
-  public static readUserQuestParticipationsUsersUserIdQuestParticipationsGet(
+  public static readUserQuestParticipations(
     userId: string,
     eventId?: string,
     status?: QuestStatus,
@@ -256,7 +248,7 @@ export class DefaultService {
    * @returns QuestParticipation Successful Response
    * @throws ApiError
    */
-  public static createQuestParticipationUsersUserIdQuestParticipationsPost(
+  public static createQuestParticipation(
     userId: string,
     requestBody: QuestParticipationCreate
   ): CancelablePromise<QuestParticipation> {
@@ -282,7 +274,7 @@ export class DefaultService {
    * @returns QuestParticipation Successful Response
    * @throws ApiError
    */
-  public static updateQuestParticipationUsersUserIdQuestParticipationsQuestIdPut(
+  public static updateQuestParticipation(
     userId: string,
     questId: string,
     requestBody: QuestParticipationUpdate
@@ -310,7 +302,7 @@ export class DefaultService {
    * @returns ItemOwnership Successful Response
    * @throws ApiError
    */
-  public static readItemOwnershipsUsersUserIdItemOwnershipsGet(
+  public static readItemOwnerships(
     userId: string,
     skip?: number,
     limit: number = 100
@@ -338,7 +330,7 @@ export class DefaultService {
    * @returns ItemOwnership Successful Response
    * @throws ApiError
    */
-  public static createItemOwnershipUsersUserIdItemOwnershipsPost(
+  public static createItemOwnership(
     userId: string,
     requestBody: ItemOwnershipCreate
   ): CancelablePromise<ItemOwnership> {
@@ -362,7 +354,7 @@ export class DefaultService {
    * @returns Quest Successful Response
    * @throws ApiError
    */
-  public static createQuestQuestsPost(
+  public static createQuest(
     requestBody: QuestCreate
   ): CancelablePromise<Quest> {
     return __request(OpenAPI, {
@@ -384,7 +376,7 @@ export class DefaultService {
    * @returns QuestItem Successful Response
    * @throws ApiError
    */
-  public static readQuestItemsQuestsQuestIdItemsGet(
+  public static readQuestItems(
     questId: string,
     skip?: number,
     limit: number = 100
@@ -412,7 +404,7 @@ export class DefaultService {
    * @returns QuestItem Successful Response
    * @throws ApiError
    */
-  public static createQuestItemQuestsQuestIdItemsPost(
+  public static createQuestItem(
     questId: string,
     requestBody: QuestItemCreate
   ): CancelablePromise<QuestItem> {
@@ -437,7 +429,7 @@ export class DefaultService {
    * @returns EventParticipationCreate Successful Response
    * @throws ApiError
    */
-  public static createEventParticipationUsersUserIdEventParticipationsPost(
+  public static createEventParticipation(
     userId: string,
     requestBody: EventParticipationCreate
   ): CancelablePromise<EventParticipationCreate> {
@@ -462,7 +454,7 @@ export class DefaultService {
    * @returns EventParticipation Successful Response
    * @throws ApiError
    */
-  public static readEventParticipationUsersUserIdEventParticipationsEventIdGet(
+  public static readEventParticipation(
     userId: string,
     eventId: string
   ): CancelablePromise<EventParticipation> {
@@ -487,7 +479,7 @@ export class DefaultService {
    * @returns EventParticipation Successful Response
    * @throws ApiError
    */
-  public static updateEventParticipationUsersUserIdEventParticipationsEventIdPut(
+  public static updateEventParticipation(
     userId: string,
     eventId: string,
     requestBody: EventParticipationUpdate
@@ -513,7 +505,7 @@ export class DefaultService {
    * @returns QuestDependencyBase Successful Response
    * @throws ApiError
    */
-  public static createQuestDependencyQuestDependenciesPost(
+  public static createQuestDependency(
     requestBody: QuestDependencyCreate
   ): CancelablePromise<QuestDependencyBase> {
     return __request(OpenAPI, {

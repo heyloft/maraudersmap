@@ -49,15 +49,15 @@ const MainScreen = () => {
 
   // TODO: Fetching first event for now, should be changed later
   useEffect(() => {
-    getOneEvent().then((e) => {
-      if (e) {
-        setCurrentEvent(e);
+    getOneEvent().then((evnt) => {
+      if (evnt) {
+        setCurrentEvent(evnt);
         if (user) {
-          isRegisteredToEvent(user.id, e.id).then((isRegistered) => {
+          isRegisteredToEvent(user.id, evnt.id).then((isRegistered) => {
             if (isRegistered) {
               return;
             }
-            registerUserToEvent(user.id, e.id);
+            registerUserToEvent(user.id, evnt.id);
           });
         }
       }

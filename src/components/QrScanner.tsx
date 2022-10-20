@@ -33,7 +33,7 @@ export default function QrScanner() {
     userQuestsProgressState
   );
   const { mutate: itemOwnershipMutation } = useMutation(createItemOwnership, {
-    onSuccess: ({ data: ownership }) => {
+    onSuccess: (ownership) => {
       sendNotification(
         "Item Unlocked 🥳",
         `You have unlocked '${ownership.item.title}'`
