@@ -1,23 +1,27 @@
 import { LocationObjectCoords, LocationObject } from "expo-location";
 import { sendNotification } from "../notifications/notifications";
 import { distance } from "./location";
-import { QuestParticipation } from "../client";
+import { Quest, QuestParticipation } from "../client";
 import updateQuestParticipation from "../api/updateQuestParticipation";
 import fetchUnstartedQuests from "../api/fetchUnstartedQuests";
 
-const TRESHOLD = 50;
-const EVENTID = "cc0d3b66-3edf-4259-a5f4-09e1ee32ffd3";
+const TRESHOLD = 20;
 
 export const locationUnlock = async (
   newLocation: LocationObject,
-  userID: string
+  userID: string,
+  eventID: string
 ) => {
-  const res: QuestParticipation[] = await fetchUnstartedQuests(EVENTID, userID);
-  const lockedQuests = new Set(res);
-  lockedQuests?.forEach((quest) => {
+  const lockedQuests: QuestParticipation[] = await fetchUnstartedQuests(
+    eventID,
+    userID
+  );
+
+  const unlocked: Quest[] = [];
+  lockedQuests?.forEach((qp) => {
     const location: LocationObjectCoords = {
-      latitude: quest.quest.location[0],
-      longitude: quest.quest.location[1],
+      latitude: qp.quest.location[0],
+      longitude: qp.quest.location[1],
       accuracy: null,
       altitude: null,
       altitudeAccuracy: null,
@@ -26,12 +30,10 @@ export const locationUnlock = async (
     };
     const dist = distance(newLocation.coords, location);
     if (dist < TRESHOLD) {
-      sendNotification(
-        "Congratulations you unlocked a new Quest!",
-        `${quest.quest.title} is now unlocked!`
-      );
-      lockedQuests.delete(quest);
-      updateQuestParticipation(userID, quest.quest.id, 3);
+      sendNotification("Quest Unlocked ✨", `You unlocked '${qp.quest.title}'`);
+      unlocked.push(qp.quest);
+      updateQuestParticipation(userID, qp.quest.id, 3);
     }
   });
+  return unlocked.length > 0;
 };

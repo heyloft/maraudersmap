@@ -1,23 +1,82 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, SectionList } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { QuestStackParamList } from "./QuestNavigator";
 import { Pressable } from "react-native";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  currentEventState,
+  currentUser,
+  questScreenVisibleQuestState,
+  userQuestsProgressState,
+  userQuestsState,
+} from "../recoil/atom";
+import { QuestParticipation } from "../client";
+import { useQuery } from "react-query";
+import { getUserEventActiveQuests, getUserQuestProgress } from "../api/quests";
 
 const QuestLogScreen = ({
   navigation,
 }: NativeStackScreenProps<QuestStackParamList, "Quest log">) => {
-  const DATA = [
+  const user = useRecoilValue(currentUser);
+
+  const currentEvent = useRecoilValue(currentEventState);
+  const setUserQuests = useSetRecoilState(userQuestsState);
+
+  const [userQuestsProgress, setUserQuestsProgress] = useRecoilState(
+    userQuestsProgressState
+  );
+
+  const setQuestScreenVisibleQuest = useSetRecoilState(
+    questScreenVisibleQuestState
+  );
+
+  const { data: userQuests } = useQuery<QuestParticipation[], Error>(
+    ["userQuests", currentEvent],
+    () =>
+      user && currentEvent
+        ? getUserEventActiveQuests(user.id, currentEvent.id)
+        : []
+  );
+
+  // TODO: Would want to use onSuccess in useQuery instead, but it doesn't seem to be reactive enough
+  useEffect(() => {
+    if (userQuests) {
+      setUserQuests(userQuests);
+      if (user) {
+        userQuests.forEach((q) => {
+          getUserQuestProgress(user.id, q.quest.id).then((p) => {
+            setUserQuestsProgress((existing) => ({
+              ...existing,
+              [q.quest.id]: p,
+            }));
+          });
+        });
+      }
+    }
+  }, [userQuests]);
+
+  const DATA: { title: string; data: QuestParticipation[] }[] = [
     {
-      title: "Available Quests",
-      data: ["Foxtrot Alpha", "Hotel Whiskey", "Victor Golf"],
+      title: "Active Quests",
+      data: userQuests ?? [],
     },
   ];
 
-  const Item = ({ title }: { title: string }) => (
+  const QuestItem = ({
+    questParticipation: qp,
+    progress,
+  }: {
+    questParticipation: QuestParticipation;
+    progress: { total: number; progress: number } | null;
+  }) => (
     <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.subtitle}>{title}</Text>
+      <Text style={styles.title}>{qp.quest.title}</Text>
+      {progress && (
+        <Text style={styles.subtitle}>
+          {progress.progress}/{progress.total} keys
+        </Text>
+      )}
     </View>
   );
 
@@ -26,10 +85,20 @@ const QuestLogScreen = ({
       <View style={styles.container}>
         <SectionList
           sections={DATA}
-          keyExtractor={(item, index) => item + index}
-          renderItem={({ item }) => (
-            <Pressable onPress={() => navigation.navigate("Quest")}>
-              <Item title={item} />
+          keyExtractor={(qp) => `${qp.quest.id}:${qp.user.id}`}
+          renderItem={({ item: qp }) => (
+            <Pressable
+              onPress={() => {
+                setQuestScreenVisibleQuest(qp);
+                navigation.navigate("Quest");
+              }}
+            >
+              <QuestItem
+                questParticipation={qp}
+                progress={
+                  userQuestsProgress ? userQuestsProgress[qp.quest.id] : null
+                }
+              />
             </Pressable>
           )}
           renderSectionHeader={({ section: { title } }) => (

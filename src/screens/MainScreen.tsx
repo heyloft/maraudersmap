@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import {
   faBriefcase,
@@ -15,6 +15,16 @@ import ProfileScreen from "./ProfileScreen";
 import QuestNavigator from "./QuestNavigator";
 import ScannerScreen from "./ScannerScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { getOneEvent, getUserEventActiveQuests } from "../api/quests";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  currentEventState,
+  currentUser,
+  userQuestsState,
+} from "../recoil/atom";
+import { useQuery } from "react-query";
+import { QuestParticipation } from "../client";
+import { isRegisteredToEvent, registerUserToEvent } from "../api/events";
 
 export type RootStackParamList = {
   Map: undefined;
@@ -27,6 +37,40 @@ export type RootStackParamList = {
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
 const MainScreen = () => {
+  const user = useRecoilValue(currentUser);
+
+  const [currentEvent, setCurrentEvent] = useRecoilState(currentEventState);
+
+  const setUserQuests = useSetRecoilState(userQuestsState);
+
+  // TODO: Fetching first event for now, should be changed later
+  useEffect(() => {
+    getOneEvent().then((e) => {
+      if (e) {
+        setCurrentEvent(e);
+        if (user) {
+          isRegisteredToEvent(user.id, e.id).then((isRegistered) => {
+            if (isRegistered) {
+              return;
+            }
+            registerUserToEvent(user.id, e.id);
+          });
+        }
+      }
+    });
+  }, []);
+
+  const { data: userQuests } = useQuery<QuestParticipation[], Error>(
+    ["userQuests", currentEvent],
+    () =>
+      user && currentEvent
+        ? getUserEventActiveQuests(user.id, currentEvent.id)
+        : []
+  );
+
+  // TODO: Would want to use onSuccess in useQuery instead, but it doesn't seem to be reactive enough
+  useEffect(() => userQuests && setUserQuests(userQuests), [userQuests]);
+
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -37,6 +81,7 @@ const MainScreen = () => {
           tabBarIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faMap} color={color} size={size} />
           ),
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen
@@ -52,7 +97,8 @@ const MainScreen = () => {
             />
           ),
           headerShown: false,
-          tabBarBadge: 3,
+          // tabBarBadge: 3,
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen
@@ -63,6 +109,7 @@ const MainScreen = () => {
           tabBarIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faQrcode} color={color} size={size} />
           ),
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen

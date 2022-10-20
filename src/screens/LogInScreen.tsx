@@ -4,8 +4,7 @@ import { View, StyleSheet, Text } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { useMutation } from "react-query";
 import { useRecoilState } from "recoil";
-import getUser from "../api/get-user";
-import createUser from "../api/utils/createUser";
+import { createUser, getUser } from "../api/users";
 import { UserCreate } from "../client";
 import { currentUser } from "../recoil/atom";
 

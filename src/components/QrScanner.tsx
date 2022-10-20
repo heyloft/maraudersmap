@@ -9,24 +9,63 @@ import {
 import { BarCodeScanner } from "expo-barcode-scanner";
 import QuestCompletedModal from "./QuestCompletedModal";
 import { Provider } from "react-native-paper";
-import { useRecoilState } from "recoil";
-import { currentUser } from "../recoil/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  currentUser,
+  userQuestsProgressState,
+  userQuestsState,
+} from "../recoil/atom";
 import { useMutation } from "react-query";
 import createItemOwnership from "../api/create-item-ownership";
+import { Quest } from "../client";
+import { getUserQuestProgress } from "../api/quests";
+import { sendNotification } from "../notifications/notifications";
 
 export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState<boolean>(false);
-  const [hasCompletedQuest, setQuestCompleted] = useState<boolean>(false);
-  const [user] = useRecoilState(currentUser);
+  const user = useRecoilValue(currentUser);
+  const userQuests = useRecoilValue(userQuestsState);
+
+  const [completedQuest, setCompletedQuest] = useState<Quest | null>(null);
+
+  const [userQuestsProgress, setUserQuestsProgress] = useRecoilState(
+    userQuestsProgressState
+  );
   const { mutate: itemOwnershipMutation } = useMutation(createItemOwnership, {
     onSuccess: ({ data: ownership }) => {
-      alert(`You have unlocked ${ownership.item.title}🥳`);
+      sendNotification(
+        "Item Unlocked 🥳",
+        `You have unlocked '${ownership.item.title}'`
+      );
+      if (user && userQuests) {
+        userQuests.forEach((q) => {
+          getUserQuestProgress(user.id, q.quest.id).then((p) => {
+            setUserQuestsProgress((existing) => ({
+              ...existing,
+              [q.quest.id]: p,
+            }));
+          });
+        });
+      }
     },
     onError: () => {
-      alert("Opps! Something went wrong");
+      alert("Oops! Something went wrong");
     },
   });
+
+  useEffect(() => {
+    if (userQuestsProgress) {
+      for (const [questId, p] of Object.entries(userQuestsProgress)) {
+        if (p.progress >= p.total && p.total > 0) {
+          const quest = userQuests?.find((q) => q.quest.id == questId)?.quest;
+          if (quest) {
+            setCompletedQuest(quest);
+          }
+        }
+      }
+    }
+  }, [userQuestsProgress]);
 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
@@ -39,13 +78,13 @@ export default function QrScanner() {
 
   const handleBarCodeScanned = ({ data }: { type: string; data: string }) => {
     setScanned(true);
-    setQuestCompleted(true);
-    if (user)
+    if (user) {
       itemOwnershipMutation({
         obtainedAt: new Date().toISOString(),
         userId: user.id,
         itemID: data,
       });
+    }
   };
 
   return (
@@ -72,7 +111,12 @@ export default function QrScanner() {
                 />
               </View>
             )}
-            {hasCompletedQuest && <QuestCompletedModal />}
+            {completedQuest && (
+              <QuestCompletedModal
+                quest={completedQuest}
+                onDismiss={() => setCompletedQuest(null)}
+              />
+            )}
           </>
         )}
       </View>
