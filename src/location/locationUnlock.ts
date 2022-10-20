@@ -2,8 +2,7 @@ import { LocationObjectCoords, LocationObject } from "expo-location";
 import { sendNotification } from "../notifications/notifications";
 import { distance } from "./location";
 import { Quest, QuestParticipation } from "../client";
-import updateQuestParticipation from "../api/updateQuestParticipation";
-import fetchUnstartedQuests from "../api/fetchUnstartedQuests";
+import { fetchUnstartedQuests, updateQuestParticipation } from "../api/quests";
 
 const TRESHOLD = 20;
 

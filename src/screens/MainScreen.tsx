@@ -15,7 +15,7 @@ import ProfileScreen from "./ProfileScreen";
 import QuestNavigator from "./QuestNavigator";
 import ScannerScreen from "./ScannerScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { getOneEvent, getUserEventActiveQuests } from "../api/quests";
+import { getUserEventActiveQuests } from "../api/quests";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   currentEventState,
@@ -24,7 +24,11 @@ import {
 } from "../recoil/atom";
 import { useQuery } from "react-query";
 import { QuestParticipation } from "../client";
-import { isRegisteredToEvent, registerUserToEvent } from "../api/events";
+import {
+  getOneEvent,
+  isRegisteredToEvent,
+  registerUserToEvent,
+} from "../api/events";
 
 export type RootStackParamList = {
   Map: undefined;

@@ -16,10 +16,10 @@ import {
   userQuestsState,
 } from "../recoil/atom";
 import { useMutation } from "react-query";
-import createItemOwnership from "../api/create-item-ownership";
 import { Quest } from "../client";
 import { getUserQuestProgress } from "../api/quests";
 import { sendNotification } from "../notifications/notifications";
+import { createItemOwnership } from "../api/items";
 
 export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);

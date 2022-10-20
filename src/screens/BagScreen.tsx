@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useQuery } from "react-query";
 import { useRecoilState } from "recoil";
-import getItemOwnerships from "../api/get-item-ownerships";
+import { getItemOwnerships } from "../api/items";
 import { ItemOwnership } from "../client";
 import { currentUser } from "../recoil/atom";
 
