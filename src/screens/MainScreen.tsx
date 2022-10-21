@@ -12,15 +12,15 @@ import MapScreen from "./MapScreen";
 import QuestNavigator from "./QuestNavigator";
 import ScannerScreen from "./ScannerScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { getUserEventActiveQuests } from "../api/quests";
+import { getUserEventQuests } from "../api/quests";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   currentEventState,
   currentUser,
-  userQuestsState,
+  activeQuestsState,
 } from "../recoil/atom";
 import { useQuery } from "react-query";
-import { QuestParticipation } from "../client";
+import { QuestParticipation, QuestStatus } from "../client";
 import {
   getOneEvent,
   isRegisteredToEvent,
@@ -45,21 +45,19 @@ const MainScreen = () => {
 
   const [currentEvent, setCurrentEvent] = useRecoilState(currentEventState);
 
-  const setUserQuests = useSetRecoilState(userQuestsState);
+  const setActiveQuests = useSetRecoilState(activeQuestsState);
 
   // TODO: Fetching first event for now, should be changed later
   useEffect(() => {
     getOneEvent().then((evnt) => {
-      if (evnt) {
-        setCurrentEvent(evnt);
-        if (user) {
-          isRegisteredToEvent(user.id, evnt.id).then((isRegistered) => {
-            if (isRegistered) {
-              return;
+      if (evnt && user) {
+        isRegisteredToEvent(user.id, evnt.id)
+          .then((isRegistered) => {
+            if (!isRegistered) {
+              return registerUserToEvent(user.id, evnt.id);
             }
-            registerUserToEvent(user.id, evnt.id);
-          });
-        }
+          })
+          .then(() => setCurrentEvent(evnt));
       }
     });
   }, []);
@@ -68,12 +66,12 @@ const MainScreen = () => {
     ["userQuests", currentEvent],
     () =>
       user && currentEvent
-        ? getUserEventActiveQuests(user.id, currentEvent.id)
+        ? getUserEventQuests(user.id, currentEvent.id, QuestStatus.ACTIVE)
         : []
   );
 
   // TODO: Would want to use onSuccess in useQuery instead, but it doesn't seem to be reactive enough
-  useEffect(() => userQuests && setUserQuests(userQuests), [userQuests]);
+  useEffect(() => userQuests && setActiveQuests(userQuests), [userQuests]);
 
   return (
     <Provider>

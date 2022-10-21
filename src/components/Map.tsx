@@ -2,22 +2,26 @@ import React, { useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
 import MapView, { MAP_TYPES, Marker, UrlTile } from "react-native-maps";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { LocationObject } from "expo-location";
 import { locationSetup } from "../location/location";
 import {
   currentEventState,
   currentLocation,
-  userQuestsState,
+  activeQuestsState,
 } from "../recoil/atom";
 import { useQuery } from "react-query";
 import { FontAwesome5, AntDesign } from "@expo/vector-icons";
 import { TILE_URL_TEMPLATE } from "@env";
 import MarkerCard from "./MarkerCard";
-import { QuestItem } from "../client";
+import { QuestItem, QuestParticipation, QuestStatus } from "../client";
 import { IconButton } from "react-native-paper";
-import { locationUnlock } from "../location/locationUnlock";
+import { questsWithinUnlockRadius } from "../location/locationUnlock";
 import { currentUser } from "../recoil/atom";
-import { getQuestItems, getUserEventActiveQuests } from "../api/quests";
+import {
+  getQuestItems,
+  getUserEventQuests,
+  updateQuestParticipation,
+} from "../api/quests";
+import { sendNotification } from "../notifications/notifications";
 
 enum MarkerType {
   POI = "POI",
@@ -36,42 +40,87 @@ const Map = () => {
   }>(null);
   const [animateToCoordinate, setAnimateToCoordinate] = useState(false);
   const user = useRecoilValue(currentUser);
-  const [userQuests, setUserQuests] = useRecoilState(userQuestsState);
+  const [activeQuests, setActiveQuests] = useRecoilState(activeQuestsState);
   const currentEvent = useRecoilValue(currentEventState);
 
+  // Simple "lock" to prevent multiple location unlocks for the same target
+  // (which could cause things like multiple notifications)
+  const [performingLocationUnlock, setPerformingLocationUnlock] =
+    useState(false);
+
+  const { data: unstartedQuests, refetch: refetchUnstartedQuests } = useQuery<
+    QuestParticipation[],
+    Error
+  >(["unstartedQuests", user, currentEvent], () => {
+    if (user && currentEvent) {
+      return getUserEventQuests(
+        user.id,
+        currentEvent.id,
+        QuestStatus.UNSTARTED
+      );
+    }
+    return unstartedQuests;
+  });
+
   const { data: questItems } = useQuery<QuestItem[], Error>(
-    ["questItems", userQuests],
+    ["questItems", activeQuests],
     async () => {
-      if (userQuests == null) {
+      if (activeQuests == null) {
         return [];
       }
       return (
-        await Promise.all(userQuests.map((q) => getQuestItems(q.quest.id)))
+        await Promise.all(activeQuests.map((q) => getQuestItems(q.quest.id)))
       ).flat();
     }
   );
 
-  const onPositionChange = (newLocation: LocationObject) => {
-    setLocation(newLocation);
-    if (user && currentEvent) {
-      locationUnlock(newLocation, user.id, currentEvent.id).then(
-        (someUnlocked) => {
-          if (someUnlocked && currentEvent) {
-            getUserEventActiveQuests(user.id, currentEvent.id).then(
-              setUserQuests
-            );
-          }
-        }
-      );
-    }
-  };
+  useEffect(() => {
+    // Caution! State variables will be outdated when accessed from the location update callback,
+    // since they where frozen when the callback subscription was created (in `locationSetup`).
+    // This is why we only update the state, and use a seperate useEffect to react to the change
+    locationSetup(setLocation);
+  }, []);
 
   useEffect(() => {
-    // Caution! Remember that all state from recoil will be frozen upon listener setup
-    // That is we we have 'currentEvent' in the dependency list
-    // TODO: Remove subscribers when new ones are added, or just don't do it this way...
-    locationSetup(onPositionChange);
-  }, [currentEvent]);
+    if (unstartedQuests && user && currentEvent && !performingLocationUnlock) {
+      setPerformingLocationUnlock(true);
+      const unlockedQuests = questsWithinUnlockRadius(
+        location.coords,
+        unstartedQuests.map((qp) => qp.quest)
+      );
+      if (unlockedQuests.length == 0) {
+        setPerformingLocationUnlock(false);
+        return;
+      }
+      Promise.all(
+        unlockedQuests.map((quest) => {
+          sendNotification(
+            "Quest Unlocked ✨",
+            `You unlocked '${quest.title}'`
+          );
+          return updateQuestParticipation(
+            user.id,
+            quest.id,
+            QuestStatus.ACTIVE
+          );
+        })
+      )
+        .then(() => {
+          return getUserEventQuests(
+            user.id,
+            currentEvent.id,
+            QuestStatus.ACTIVE
+          );
+        })
+        .then((activeQuests) => {
+          setActiveQuests(activeQuests);
+          return refetchUnstartedQuests();
+        })
+        .then(() => {
+          setPerformingLocationUnlock(false);
+        });
+    }
+  }, [location, unstartedQuests]);
 
   useEffect(() => {
     if (focusUserLocation && location) {
@@ -85,10 +134,9 @@ const Map = () => {
   }, [focusUserLocation, location]);
 
   const getSelectedMarker = () => {
-    if (!selectedMarker) return null;
-    return selectedMarker.markerType == MarkerType.POI
-      ? null
-      : questItems?.find((item) => item.id == selectedMarker.id);
+    if (!selectedMarker || selectedMarker.markerType == MarkerType.POI)
+      return null;
+    return questItems?.find((item) => item.id == selectedMarker.id);
   };
 
   useEffect(() => {

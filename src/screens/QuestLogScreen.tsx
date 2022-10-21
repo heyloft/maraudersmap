@@ -9,11 +9,11 @@ import {
   currentUser,
   questScreenVisibleQuestState,
   userQuestsProgressState,
-  userQuestsState,
+  activeQuestsState,
 } from "../recoil/atom";
-import { QuestParticipation } from "../client";
+import { QuestParticipation, QuestStatus } from "../client";
 import { useQuery } from "react-query";
-import { getUserEventActiveQuests, getUserQuestProgress } from "../api/quests";
+import { getUserEventQuests, getUserQuestProgress } from "../api/quests";
 
 const QuestLogScreen = ({
   navigation,
@@ -21,7 +21,7 @@ const QuestLogScreen = ({
   const user = useRecoilValue(currentUser);
 
   const currentEvent = useRecoilValue(currentEventState);
-  const setUserQuests = useSetRecoilState(userQuestsState);
+  const setActiveQuests = useSetRecoilState(activeQuestsState);
 
   const [userQuestsProgress, setUserQuestsProgress] = useRecoilState(
     userQuestsProgressState
@@ -35,14 +35,14 @@ const QuestLogScreen = ({
     ["userQuests", currentEvent],
     () =>
       user && currentEvent
-        ? getUserEventActiveQuests(user.id, currentEvent.id)
+        ? getUserEventQuests(user.id, currentEvent.id, QuestStatus.ACTIVE)
         : []
   );
 
   // TODO: Would want to use onSuccess in useQuery instead, but it doesn't seem to be reactive enough
   useEffect(() => {
     if (userQuests) {
-      setUserQuests(userQuests);
+      setActiveQuests(userQuests);
       if (user) {
         userQuests.forEach((q) => {
           getUserQuestProgress(user.id, q.quest.id).then((p) => {

@@ -30,8 +30,8 @@ export const currentEventState = atom<Event | null>({
   default: null,
 });
 
-export const userQuestsState = atom<QuestParticipation[] | null>({
-  key: "userQuests",
+export const activeQuestsState = atom<QuestParticipation[] | null>({
+  key: "activeQuests",
   default: null,
 });
 
