@@ -17,7 +17,9 @@ Create your own local `.env` file for holding environment variables. It must be 
 
     On **Windows**, run `ipconfig` and look for `IPv4 Address`.
 
-    > A LAN IP address is required because your phone cannot access localhost services running on your computer. If your phone was not on the same LAN, the backend would need to be accessible through the public internet.
+    > A LAN IP address is required because your phone cannot access localhost services running on your computer.
+
+    > If your phone is not on the same LAN, the backend must be accessible through the public internet. In that case you can try a service like [Telebit](https://telebit.cloud/).
 
 2. Update `.env` with the following (replacing `<your-LAN-ip-address>` with the address you found above)
     ```
