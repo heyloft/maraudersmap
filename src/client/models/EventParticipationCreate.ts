@@ -5,5 +5,4 @@
 export type EventParticipationCreate = {
   status: number;
   event_id: string;
-  user_id: string;
 };

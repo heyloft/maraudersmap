@@ -19,6 +19,7 @@ import type { QuestItemCreate } from "../models/QuestItemCreate";
 import type { QuestParticipation } from "../models/QuestParticipation";
 import type { QuestParticipationCreate } from "../models/QuestParticipationCreate";
 import type { QuestParticipationUpdate } from "../models/QuestParticipationUpdate";
+import type { QuestStatus } from "../models/QuestStatus";
 import type { User } from "../models/User";
 import type { UserCreate } from "../models/UserCreate";
 
@@ -32,267 +33,10 @@ export class DefaultService {
    * @returns string Successful Response
    * @throws ApiError
    */
-  public static indexGet(): CancelablePromise<string> {
+  public static index(): CancelablePromise<string> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/",
-    });
-  }
-
-  /**
-   * Read Items
-   * @param skip
-   * @param limit
-   * @returns Item Successful Response
-   * @throws ApiError
-   */
-  public static readItemsItemsGet(
-    skip?: number,
-    limit: number = 100
-  ): CancelablePromise<Array<Item>> {
-    return __request(OpenAPI, {
-      method: "GET",
-      url: "/items/",
-      query: {
-        skip: skip,
-        limit: limit,
-      },
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Create Item
-   * @param requestBody
-   * @returns Item Successful Response
-   * @throws ApiError
-   */
-  public static createItemItemsPost(
-    requestBody: ItemCreate
-  ): CancelablePromise<Item> {
-    return __request(OpenAPI, {
-      method: "POST",
-      url: "/items/",
-      body: requestBody,
-      mediaType: "application/json",
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Read Events
-   * @param skip
-   * @param limit
-   * @returns Event Successful Response
-   * @throws ApiError
-   */
-  public static readEventsEventsGet(
-    skip?: number,
-    limit: number = 100
-  ): CancelablePromise<Array<Event>> {
-    return __request(OpenAPI, {
-      method: "GET",
-      url: "/events/",
-      query: {
-        skip: skip,
-        limit: limit,
-      },
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Create Event
-   * @param requestBody
-   * @returns Event Successful Response
-   * @throws ApiError
-   */
-  public static createEventEventsPost(
-    requestBody: EventCreate
-  ): CancelablePromise<Event> {
-    return __request(OpenAPI, {
-      method: "POST",
-      url: "/events/",
-      body: requestBody,
-      mediaType: "application/json",
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Create Quest Participation
-   * @param requestBody
-   * @returns QuestParticipation Successful Response
-   * @throws ApiError
-   */
-  public static createQuestParticipationQuestParticipationsPost(
-    requestBody: QuestParticipationCreate
-  ): CancelablePromise<QuestParticipation> {
-    return __request(OpenAPI, {
-      method: "POST",
-      url: "/questParticipations/",
-      body: requestBody,
-      mediaType: "application/json",
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Update Quest Participation
-   * @param userId
-   * @param questId
-   * @param requestBody
-   * @returns QuestParticipation Successful Response
-   * @throws ApiError
-   */
-  public static updateQuestParticipationQuestParticipationsUserIdQuestIdPut(
-    userId: string,
-    questId: string,
-    requestBody: QuestParticipationUpdate
-  ): CancelablePromise<QuestParticipation> {
-    return __request(OpenAPI, {
-      method: "PUT",
-      url: "/questParticipations/{user_id}/{quest_id}",
-      path: {
-        user_id: userId,
-        quest_id: questId,
-      },
-      body: requestBody,
-      mediaType: "application/json",
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Read Active Quests
-   * @param eventId
-   * @param userId
-   * @param skip
-   * @param limit
-   * @returns QuestParticipation Successful Response
-   * @throws ApiError
-   */
-  public static readActiveQuestsEventsEventIdUserUserIdActiveQuestsGet(
-    eventId: string,
-    userId: string,
-    skip?: number,
-    limit: number = 100
-  ): CancelablePromise<Array<QuestParticipation>> {
-    return __request(OpenAPI, {
-      method: "GET",
-      url: "/events/{event_id}/user/{user_id}/activeQuests",
-      path: {
-        event_id: eventId,
-        user_id: userId,
-      },
-      query: {
-        skip: skip,
-        limit: limit,
-      },
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Read Unstarted Quests
-   * @param eventId
-   * @param userId
-   * @returns QuestParticipation Successful Response
-   * @throws ApiError
-   */
-  public static readUnstartedQuestsEventsEventIdUserUserIdUnstartedQuestsGet(
-    eventId: string,
-    userId: string
-  ): CancelablePromise<Array<QuestParticipation>> {
-    return __request(OpenAPI, {
-      method: "GET",
-      url: "/events/{event_id}/user/{user_id}/unstartedQuests",
-      path: {
-        event_id: eventId,
-        user_id: userId,
-      },
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Read Item Ownerships
-   * @param skip
-   * @param limit
-   * @returns ItemOwnership Successful Response
-   * @throws ApiError
-   */
-  public static readItemOwnershipsItemOwnershipsGet(
-    skip?: number,
-    limit: number = 100
-  ): CancelablePromise<Array<ItemOwnership>> {
-    return __request(OpenAPI, {
-      method: "GET",
-      url: "/itemOwnerships/",
-      query: {
-        skip: skip,
-        limit: limit,
-      },
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Create Item Ownership
-   * @param requestBody
-   * @returns ItemOwnership Successful Response
-   * @throws ApiError
-   */
-  public static createItemOwnershipItemOwnershipsPost(
-    requestBody: ItemOwnershipCreate
-  ): CancelablePromise<ItemOwnership> {
-    return __request(OpenAPI, {
-      method: "POST",
-      url: "/itemOwnerships/",
-      body: requestBody,
-      mediaType: "application/json",
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Read Item Ownership
-   * @param itemOwnershipId
-   * @returns ItemOwnership Successful Response
-   * @throws ApiError
-   */
-  public static readItemOwnershipItemOwnershipsItemOwnershipIdGet(
-    itemOwnershipId: string
-  ): CancelablePromise<ItemOwnership> {
-    return __request(OpenAPI, {
-      method: "GET",
-      url: "/itemOwnerships/{item_ownership_id}",
-      path: {
-        item_ownership_id: itemOwnershipId,
-      },
-      errors: {
-        422: `Validation Error`,
-      },
     });
   }
 
@@ -303,7 +47,7 @@ export class DefaultService {
    * @returns User Successful Response
    * @throws ApiError
    */
-  public static readUsersUsersGet(
+  public static readUsers(
     skip?: number,
     limit: number = 100
   ): CancelablePromise<Array<User>> {
@@ -326,9 +70,7 @@ export class DefaultService {
    * @returns User Successful Response
    * @throws ApiError
    */
-  public static createUserUsersPost(
-    requestBody: UserCreate
-  ): CancelablePromise<User> {
+  public static createUser(requestBody: UserCreate): CancelablePromise<User> {
     return __request(OpenAPI, {
       method: "POST",
       url: "/users/",
@@ -346,9 +88,7 @@ export class DefaultService {
    * @returns User Successful Response
    * @throws ApiError
    */
-  public static readUserUsersUserIdGet(
-    userId: string
-  ): CancelablePromise<User> {
+  public static readUser(userId: string): CancelablePromise<User> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/users/{user_id}",
@@ -367,15 +107,261 @@ export class DefaultService {
    * @returns User Successful Response
    * @throws ApiError
    */
-  public static readUserByUsernameUsersByUsernameUsernameGet(
-    username: string
-  ): CancelablePromise<User> {
+  public static readUserByUsername(username: string): CancelablePromise<User> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/users/by_username/{username}",
       path: {
         username: username,
       },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Read Items
+   * @param skip
+   * @param limit
+   * @returns Item Successful Response
+   * @throws ApiError
+   */
+  public static readItems(
+    skip?: number,
+    limit: number = 100
+  ): CancelablePromise<Array<Item>> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/items/",
+      query: {
+        skip: skip,
+        limit: limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Create Item
+   * @param requestBody
+   * @returns Item Successful Response
+   * @throws ApiError
+   */
+  public static createItem(requestBody: ItemCreate): CancelablePromise<Item> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/items/",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Read Events
+   * @param skip
+   * @param limit
+   * @returns Event Successful Response
+   * @throws ApiError
+   */
+  public static readEvents(
+    skip?: number,
+    limit: number = 100
+  ): CancelablePromise<Array<Event>> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/events/",
+      query: {
+        skip: skip,
+        limit: limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Create Event
+   * @param requestBody
+   * @returns Event Successful Response
+   * @throws ApiError
+   */
+  public static createEvent(
+    requestBody: EventCreate
+  ): CancelablePromise<Event> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/events/",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Read User Quest Participations
+   * @param userId
+   * @param eventId
+   * @param status
+   * @param skip
+   * @param limit
+   * @returns QuestParticipation Successful Response
+   * @throws ApiError
+   */
+  public static readUserQuestParticipations(
+    userId: string,
+    eventId?: string,
+    status?: QuestStatus,
+    skip?: number,
+    limit: number = 100
+  ): CancelablePromise<Array<QuestParticipation>> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/users/{user_id}/questParticipations/",
+      path: {
+        user_id: userId,
+      },
+      query: {
+        event_id: eventId,
+        status: status,
+        skip: skip,
+        limit: limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Create Quest Participation
+   * @param userId
+   * @param requestBody
+   * @returns QuestParticipation Successful Response
+   * @throws ApiError
+   */
+  public static createQuestParticipation(
+    userId: string,
+    requestBody: QuestParticipationCreate
+  ): CancelablePromise<QuestParticipation> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/users/{user_id}/questParticipations",
+      path: {
+        user_id: userId,
+      },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Update Quest Participation
+   * @param userId
+   * @param questId
+   * @param requestBody
+   * @returns QuestParticipation Successful Response
+   * @throws ApiError
+   */
+  public static updateQuestParticipation(
+    userId: string,
+    questId: string,
+    requestBody: QuestParticipationUpdate
+  ): CancelablePromise<QuestParticipation> {
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/users/{user_id}/questParticipations/{quest_id}",
+      path: {
+        user_id: userId,
+        quest_id: questId,
+      },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Read Item Ownerships
+   * @param userId
+   * @param skip
+   * @param limit
+   * @returns ItemOwnership Successful Response
+   * @throws ApiError
+   */
+  public static readItemOwnerships(
+    userId: string,
+    skip?: number,
+    limit: number = 100
+  ): CancelablePromise<Array<ItemOwnership>> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/users/{user_id}/itemOwnerships/",
+      path: {
+        user_id: userId,
+      },
+      query: {
+        skip: skip,
+        limit: limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Create Item Ownership
+   * @param userId
+   * @param requestBody
+   * @returns ItemOwnership Successful Response
+   * @throws ApiError
+   */
+  public static createItemOwnership(
+    userId: string,
+    requestBody: ItemOwnershipCreate
+  ): CancelablePromise<ItemOwnership> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/users/{user_id}/itemOwnerships/",
+      path: {
+        user_id: userId,
+      },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Create Quest
+   * @param requestBody
+   * @returns Quest Successful Response
+   * @throws ApiError
+   */
+  public static createQuest(
+    requestBody: QuestCreate
+  ): CancelablePromise<Quest> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/quests/",
+      body: requestBody,
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -390,7 +376,7 @@ export class DefaultService {
    * @returns QuestItem Successful Response
    * @throws ApiError
    */
-  public static readQuestItemsQuestsQuestIdItemsGet(
+  public static readQuestItems(
     questId: string,
     skip?: number,
     limit: number = 100
@@ -418,7 +404,7 @@ export class DefaultService {
    * @returns QuestItem Successful Response
    * @throws ApiError
    */
-  public static createQuestItemQuestsQuestIdItemsPost(
+  public static createQuestItem(
     questId: string,
     requestBody: QuestItemCreate
   ): CancelablePromise<QuestItem> {
@@ -437,59 +423,48 @@ export class DefaultService {
   }
 
   /**
-   * Create Quest
-   * @param requestBody
-   * @returns Quest Successful Response
-   * @throws ApiError
-   */
-  public static createQuestQuestsPost(
-    requestBody: QuestCreate
-  ): CancelablePromise<Quest> {
-    return __request(OpenAPI, {
-      method: "POST",
-      url: "/quests/",
-      body: requestBody,
-      mediaType: "application/json",
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Create Quest Dependency
-   * @param requestBody
-   * @returns QuestDependencyBase Successful Response
-   * @throws ApiError
-   */
-  public static createQuestDependencyQuestDependenciesPost(
-    requestBody: QuestDependencyCreate
-  ): CancelablePromise<QuestDependencyBase> {
-    return __request(OpenAPI, {
-      method: "POST",
-      url: "/questDependencies/",
-      body: requestBody,
-      mediaType: "application/json",
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Create Event Participation
+   * Create Eventparticipation
+   * @param userId
    * @param requestBody
    * @returns EventParticipationCreate Successful Response
    * @throws ApiError
    */
-  public static createEventParticipationEventParticipationsPost(
+  public static createEventParticipation(
+    userId: string,
     requestBody: EventParticipationCreate
   ): CancelablePromise<EventParticipationCreate> {
     return __request(OpenAPI, {
       method: "POST",
-      url: "/eventParticipations/",
+      url: "/users/{user_id}/eventParticipations/",
+      path: {
+        user_id: userId,
+      },
       body: requestBody,
       mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Read Event Participation
+   * @param userId
+   * @param eventId
+   * @returns EventParticipation Successful Response
+   * @throws ApiError
+   */
+  public static readEventParticipation(
+    userId: string,
+    eventId: string
+  ): CancelablePromise<EventParticipation> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/users/{user_id}/eventParticipations/{event_id}/",
+      path: {
+        user_id: userId,
+        event_id: eventId,
+      },
       errors: {
         422: `Validation Error`,
       },
@@ -504,18 +479,38 @@ export class DefaultService {
    * @returns EventParticipation Successful Response
    * @throws ApiError
    */
-  public static updateEventParticipationEventParticipationsUserIdEventIdPut(
+  public static updateEventParticipation(
     userId: string,
     eventId: string,
     requestBody: EventParticipationUpdate
   ): CancelablePromise<EventParticipation> {
     return __request(OpenAPI, {
       method: "PUT",
-      url: "/eventParticipations/{user_id}/{event_id}",
+      url: "/users/{user_id}/eventParticipations/{event_id}/",
       path: {
         user_id: userId,
         event_id: eventId,
       },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Create Quest Dependency
+   * @param requestBody
+   * @returns QuestDependencyBase Successful Response
+   * @throws ApiError
+   */
+  public static createQuestDependency(
+    requestBody: QuestDependencyCreate
+  ): CancelablePromise<QuestDependencyBase> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/questDependencies/",
       body: requestBody,
       mediaType: "application/json",
       errors: {

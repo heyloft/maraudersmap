@@ -5,11 +5,14 @@ import { RecoilRoot } from "recoil";
 import { notificationSetup } from "./src/notifications/notifications";
 import { QueryClient, QueryClientProvider } from "react-query";
 import AppNavigator from "./src/screens/AppNavigator";
+import { OpenAPI } from "./src/client";
+import { BASE_URL } from "@env";
 
 const queryClient = new QueryClient();
 
 export default function App() {
   useEffect(() => {
+    OpenAPI.BASE = BASE_URL;
     notificationSetup();
   }, []);
 
