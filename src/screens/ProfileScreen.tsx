@@ -1,12 +1,19 @@
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Button } from "react-native-paper";
-import { useRecoilState } from "recoil";
+import { useRecoilTransaction_UNSTABLE, useRecoilValue } from "recoil";
 import ErrorAlert from "../components/ErrorAlert";
-import { currentUser } from "../recoil/atom";
+import { currentUser, resetUserStateTransaction } from "../recoil/atom";
 
 const ProfileScreen = () => {
-  const [user, setUser] = useRecoilState(currentUser);
+  const user = useRecoilValue(currentUser);
+
+  // Note: using "unstable" feature here, but current limitations don't affect this use case
+  // (https://recoiljs.org/docs/api-reference/core/useRecoilTransaction#current-limitations-and-future-vision)
+  const resetUserState = useRecoilTransaction_UNSTABLE(
+    resetUserStateTransaction
+  );
+
   return (
     <View style={styles.container}>
       {user ? (
@@ -20,7 +27,7 @@ const ProfileScreen = () => {
             style={styles.logoutButton}
             mode="contained"
             color="red"
-            onPress={() => setUser(null)}
+            onPress={() => resetUserState()}
             icon="logout"
             contentStyle={{ flexDirection: "row-reverse" }}
           >
