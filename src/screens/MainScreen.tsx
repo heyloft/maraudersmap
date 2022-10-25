@@ -36,7 +36,6 @@ export type RootStackParamList = {
   QuestNavigator: undefined;
   Bag: undefined;
   Profile: undefined;
-  Welcome: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
