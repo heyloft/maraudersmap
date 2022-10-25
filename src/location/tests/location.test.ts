@@ -121,4 +121,8 @@ describe("Tests that distance is calculated correctly for different locations.",
     const dist = distance(location1, location2);
     expect(dist).toBe(NaN);
   });
+
+  it("should fail.", () => {
+    expect("foo").toBe("bar");
+  });
 });
