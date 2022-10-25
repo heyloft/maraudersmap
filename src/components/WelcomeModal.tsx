@@ -11,7 +11,7 @@ const WelcomeModal = () => {
   return (
     <Portal>
       <Modal
-        visible={user != null && isShown == false}
+        visible={user != null && !isShown}
         onDismiss={() => setShown(true)}
         contentContainerStyle={styles.modalContainer}
       >
