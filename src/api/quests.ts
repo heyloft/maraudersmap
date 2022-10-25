@@ -8,11 +8,12 @@ import {
 } from "../client";
 import { getItemOwnerships } from "./items";
 
-export const getUserEventActiveQuests = (
+export const getUserEventQuests = (
   user_id: string,
-  event_id: string
+  event_id: string,
+  status?: QuestStatus
 ): Promise<QuestParticipation[]> => {
-  return API.readUserQuestParticipations(user_id, event_id, QuestStatus.ACTIVE);
+  return API.readUserQuestParticipations(user_id, event_id, status);
 };
 
 export const getQuestItems = (quest_id: string) => API.readQuestItems(quest_id);
@@ -46,15 +47,4 @@ export const updateQuestParticipation = (
   return API.updateQuestParticipation(user_id, quest_id, {
     status: status,
   });
-};
-
-export const fetchUnstartedQuests = (eventID: string, userID: string) => {
-  if (userID == null || eventID == null) {
-    return [];
-  }
-  return API.readUserQuestParticipations(
-    userID,
-    eventID,
-    QuestStatus.UNSTARTED
-  );
 };

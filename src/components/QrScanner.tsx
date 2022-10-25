@@ -13,7 +13,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   currentUser,
   userQuestsProgressState,
-  userQuestsState,
+  activeQuestsState,
 } from "../recoil/atom";
 import { useMutation } from "react-query";
 import { Quest } from "../client";
@@ -25,7 +25,7 @@ export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState<boolean>(false);
   const user = useRecoilValue(currentUser);
-  const userQuests = useRecoilValue(userQuestsState);
+  const activeQuests = useRecoilValue(activeQuestsState);
 
   const [completedQuest, setCompletedQuest] = useState<Quest | null>(null);
 
@@ -38,8 +38,8 @@ export default function QrScanner() {
         "Item Unlocked 🥳",
         `You have unlocked '${ownership.item.title}'`
       );
-      if (user && userQuests) {
-        userQuests.forEach((q) => {
+      if (user && activeQuests) {
+        activeQuests.forEach((q) => {
           getUserQuestProgress(user.id, q.quest.id).then((p) => {
             setUserQuestsProgress((existing) => ({
               ...existing,
@@ -58,7 +58,7 @@ export default function QrScanner() {
     if (userQuestsProgress) {
       for (const [questId, p] of Object.entries(userQuestsProgress)) {
         if (p.progress >= p.total && p.total > 0) {
-          const quest = userQuests?.find((q) => q.quest.id == questId)?.quest;
+          const quest = activeQuests?.find((q) => q.quest.id == questId)?.quest;
           if (quest) {
             setCompletedQuest(quest);
           }

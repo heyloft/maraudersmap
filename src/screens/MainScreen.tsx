@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+
 import {
   faBriefcase,
   faCircleQuestion,
@@ -12,15 +13,16 @@ import MapScreen from "./MapScreen";
 import QuestNavigator from "./QuestNavigator";
 import ScannerScreen from "./ScannerScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { getUserEventActiveQuests } from "../api/quests";
+import { getUserEventQuests, updateQuestParticipation } from "../api/quests";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   currentEventState,
   currentUser,
-  userQuestsState,
+  activeQuestsState,
+  currentLocation,
 } from "../recoil/atom";
 import { useQuery } from "react-query";
-import { QuestParticipation } from "../client";
+import { QuestParticipation, QuestStatus } from "../client";
 import {
   getOneEvent,
   isRegisteredToEvent,
@@ -29,6 +31,9 @@ import {
 import WelcomeModal from "../components/WelcomeModal";
 import { Provider } from "react-native-paper";
 import ProfileScreen from "./ProfileScreen";
+import { questsWithinUnlockRadius } from "../location/locationUnlock";
+import { locationSetup } from "../location/location";
+import { sendNotification } from "../notifications/notifications";
 
 export type RootStackParamList = {
   Map: undefined;
@@ -42,38 +47,100 @@ const Tab = createBottomTabNavigator<RootStackParamList>();
 
 const MainScreen = () => {
   const user = useRecoilValue(currentUser);
+  const [location, setLocation] = useRecoilState(currentLocation);
 
   const [currentEvent, setCurrentEvent] = useRecoilState(currentEventState);
+  const setActiveQuests = useSetRecoilState(activeQuestsState);
 
-  const setUserQuests = useSetRecoilState(userQuestsState);
+  // Simple "lock" to prevent multiple location unlocks for the same target
+  // (which could cause things like multiple notifications)
+  const [performingLocationUnlock, setPerformingLocationUnlock] =
+    useState(false);
+
+  const { data: activeQuests, refetch: refetchActiveQuests } = useQuery<
+    QuestParticipation[],
+    Error
+  >(["activeQuests", currentEvent], () =>
+    user && currentEvent
+      ? getUserEventQuests(user.id, currentEvent.id, QuestStatus.ACTIVE)
+      : []
+  );
+
+  // TODO: Would want to use onSuccess in useQuery instead, but it doesn't seem to be reactive enough
+  useEffect(
+    () => activeQuests && setActiveQuests(activeQuests),
+    [activeQuests]
+  );
+
+  const { data: unstartedQuests, refetch: refetchUnstartedQuests } = useQuery<
+    QuestParticipation[],
+    Error
+  >(["unstartedQuests", user, currentEvent], () => {
+    if (user && currentEvent) {
+      return getUserEventQuests(
+        user.id,
+        currentEvent.id,
+        QuestStatus.UNSTARTED
+      );
+    }
+    return unstartedQuests;
+  });
 
   // TODO: Fetching first event for now, should be changed later
   useEffect(() => {
     getOneEvent().then((evnt) => {
-      if (evnt) {
-        setCurrentEvent(evnt);
-        if (user) {
-          isRegisteredToEvent(user.id, evnt.id).then((isRegistered) => {
-            if (isRegistered) {
-              return;
+      if (evnt && user) {
+        isRegisteredToEvent(user.id, evnt.id)
+          .then((isRegistered) => {
+            if (!isRegistered) {
+              return registerUserToEvent(user.id, evnt.id);
             }
-            registerUserToEvent(user.id, evnt.id);
-          });
-        }
+          })
+          .then(() => setCurrentEvent(evnt));
       }
     });
   }, []);
 
-  const { data: userQuests } = useQuery<QuestParticipation[], Error>(
-    ["userQuests", currentEvent],
-    () =>
-      user && currentEvent
-        ? getUserEventActiveQuests(user.id, currentEvent.id)
-        : []
-  );
+  useEffect(() => {
+    // Caution! State variables will be outdated when accessed from the location update callback,
+    // since they where frozen when the callback subscription was created (in `locationSetup`).
+    // This is why we only update the state, and use a seperate useEffect to react to the change
+    locationSetup(setLocation);
+  }, []);
 
-  // TODO: Would want to use onSuccess in useQuery instead, but it doesn't seem to be reactive enough
-  useEffect(() => userQuests && setUserQuests(userQuests), [userQuests]);
+  useEffect(() => {
+    if (unstartedQuests && user && currentEvent && !performingLocationUnlock) {
+      setPerformingLocationUnlock(true);
+      const unlockedQuests = questsWithinUnlockRadius(
+        location.coords,
+        unstartedQuests.map((qp) => qp.quest)
+      );
+      if (unlockedQuests.length == 0) {
+        setPerformingLocationUnlock(false);
+        return;
+      }
+      Promise.all(
+        unlockedQuests.map((quest) => {
+          sendNotification(
+            "Quest Unlocked ✨",
+            `You unlocked '${quest.title}'`
+          );
+          return updateQuestParticipation(
+            user.id,
+            quest.id,
+            QuestStatus.ACTIVE
+          );
+        })
+      )
+        .then(() =>
+          getUserEventQuests(user.id, currentEvent.id, QuestStatus.ACTIVE)
+        )
+        .then(setActiveQuests)
+        .then(() => refetchUnstartedQuests())
+        .then(() => refetchActiveQuests())
+        .then(() => setPerformingLocationUnlock(false));
+    }
+  }, [location, unstartedQuests]);
 
   return (
     <Provider>

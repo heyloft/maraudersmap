@@ -1,4 +1,4 @@
-import { atom } from "recoil";
+import { atom, TransactionInterface_UNSTABLE } from "recoil";
 import { LocationObject } from "expo-location";
 import { User, Event, QuestParticipation } from "../client";
 
@@ -20,6 +20,18 @@ export const currentLocation = atom({
   default: defaultLocation, // default value (aka initial value)
 });
 
+export const resetUserStateTransaction: (
+  i: TransactionInterface_UNSTABLE
+) => (...args: readonly unknown[]) => void =
+  ({ reset }) =>
+  () => {
+    reset(currentUser);
+    reset(currentEventState);
+    reset(activeQuestsState);
+    reset(userQuestsProgressState);
+    reset(questScreenVisibleQuestState);
+  };
+
 export const currentUser = atom<User | null>({
   key: "currentUser",
   default: null,
@@ -30,8 +42,8 @@ export const currentEventState = atom<Event | null>({
   default: null,
 });
 
-export const userQuestsState = atom<QuestParticipation[] | null>({
-  key: "userQuests",
+export const activeQuestsState = atom<QuestParticipation[] | null>({
+  key: "activeQuests",
   default: null,
 });
 
