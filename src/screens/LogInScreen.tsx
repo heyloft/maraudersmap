@@ -13,7 +13,7 @@ const LogInScreen = () => {
   const [usernameInput, setUsernameInput] = useState("");
 
   const { mutate: createUserMutate } = useMutation(createUser, {
-    onSuccess: ({ data: user }) => setUser(user),
+    onSuccess: (user) => setUser(user),
     onError: (e) => {
       console.error(e);
     },
@@ -32,7 +32,7 @@ const LogInScreen = () => {
     getUser(sanitizedUsername)
       .then(setUser)
       .catch((reason: AxiosError) => {
-        switch (reason.response?.status) {
+        switch (reason.status) {
           case 404: // Not Found
             createUserMutate(sanitizedUsername);
             break;

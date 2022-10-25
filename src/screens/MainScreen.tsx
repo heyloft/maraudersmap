@@ -15,7 +15,7 @@ import ProfileScreen from "./ProfileScreen";
 import QuestNavigator from "./QuestNavigator";
 import ScannerScreen from "./ScannerScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { getOneEvent, getUserEventActiveQuests } from "../api/quests";
+import { getUserEventActiveQuests } from "../api/quests";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   currentEventState,
@@ -24,7 +24,11 @@ import {
 } from "../recoil/atom";
 import { useQuery } from "react-query";
 import { QuestParticipation } from "../client";
-import { isRegisteredToEvent, registerUserToEvent } from "../api/events";
+import {
+  getOneEvent,
+  isRegisteredToEvent,
+  registerUserToEvent,
+} from "../api/events";
 
 export type RootStackParamList = {
   Map: undefined;
@@ -45,15 +49,15 @@ const MainScreen = () => {
 
   // TODO: Fetching first event for now, should be changed later
   useEffect(() => {
-    getOneEvent().then((e) => {
-      if (e) {
-        setCurrentEvent(e);
+    getOneEvent().then((evnt) => {
+      if (evnt) {
+        setCurrentEvent(evnt);
         if (user) {
-          isRegisteredToEvent(user.id, e.id).then((isRegistered) => {
+          isRegisteredToEvent(user.id, evnt.id).then((isRegistered) => {
             if (isRegistered) {
               return;
             }
-            registerUserToEvent(user.id, e.id);
+            registerUserToEvent(user.id, evnt.id);
           });
         }
       }
