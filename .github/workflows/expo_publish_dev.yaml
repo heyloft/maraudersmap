@@ -26,8 +26,8 @@ jobs:
 
       - name: 🌍 Decode .env from base64 secret
         env:
-          ENV_FILE_BASE64: ${{ secrets.ENV_FILE_BASE64 }}
+          ENV_FILE_BASE64: ${{ secrets.ENV_FILE_BASE64_DEV }}
         run: echo $ENV_FILE_BASE64 | base64 --decode > .env
 
       - name: 🚀 Publish app
-        run: expo publish --release-channel main --non-interactive
+        run: expo publish --release-channel dev --non-interactive

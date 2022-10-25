@@ -82,7 +82,7 @@ expo publish --release-channel <channel>
 where `<channel>` could be `main`, `dev` or something else we want to use.
 
 ## Updating `.env` for GitHub Actions
-In order to use a `.env` file inside GitHub Actions, we store the `.env` file as a base64 encoded string in a repository secret (`ENV_FILE_BASE64`). 
+In order to use a `.env` file inside GitHub Actions, we store the `.env` file as a base64 encoded string in a repository secret (`ENV_FILE_BASE64_DEV` and `ENV_FILE_BASE64_PROD`). 
 
 Encoding is performed locally with the following command
 ```
