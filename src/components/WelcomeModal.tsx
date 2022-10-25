@@ -16,9 +16,13 @@ const WelcomeModal = () => {
         contentContainerStyle={styles.modalContainer}
       >
         <View style={styles.container}>
-          <Text style={{ fontSize: 27, fontWeight: "500" }}>Welcome!</Text>
+          <Text style={{ fontSize: 27, fontWeight: "500" }}>
+            Welcome {user?.username}🔎
+          </Text>
+
           <Text style={{ fontSize: 20, textAlign: "center", margin: 15 }}>
-            Introduction text...
+            Hi and welcome to Marauders Map🗺️ You have to do a location unlock
+            to be able to start the journey...
           </Text>
           <Button mode="contained" onPress={() => setShown(true)} color="green">
             Get started
