@@ -9,5 +9,4 @@ export type ItemBase = {
   item_type: ItemType;
   description?: string;
   icon: string;
-  location?: Array<any>;
 };
