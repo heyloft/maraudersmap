@@ -1,7 +1,5 @@
-on:
-  push:
-    branches:
-      - 87-unit-testing
+on: [pull_request]
+
 jobs:
   lint:
     runs-on: ubuntu-latest
