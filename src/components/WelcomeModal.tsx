@@ -21,8 +21,9 @@ const WelcomeModal = () => {
           </Text>
 
           <Text style={{ fontSize: 20, textAlign: "center", margin: 15 }}>
-            Hi and welcome to Marauders Map🗺️ You have to do a location unlock
-            to be able to start the journey...
+            {
+              "Hi and welcome to Marauder's Map🗺️ You have to do a location unlock to be able to start the journey..."
+            }
           </Text>
           <Button mode="contained" onPress={() => setShown(true)} color="green">
             Get started
