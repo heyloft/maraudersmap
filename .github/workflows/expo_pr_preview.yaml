@@ -2,52 +2,46 @@ on: [pull_request]
 jobs:
   lint:
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [16.x]
+  
     steps:
-      - name: 🏗 Setup repo
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+    - name: Setup node
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: yarn
 
-      - name: 🏗 Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-          cache: yarn
+    - name: "🤪 Install dependencies"
+      run: "yarn install"
 
-      - name: "🤪 Install dependencies"
-        run: "yarn install"
+    - name: "🤓 Run ESLint"
+      run: "yarn eslint ."
 
-      - name: "🤓 Run ESLint"
-        run: "yarn eslint ."
+    - name: "💋 Run Prettier"
+      run: "yarn prettier --check ."
+        
+    - name: "Run tests"
+      run: "yarn test"
 
-  prettier:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: 🏗 Setup repo
-        uses: actions/checkout@v2
-
-      - name: 🏗 Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-          cache: yarn
-
-      - name: "🤪 Install dependencies"
-        run: "yarn install"
-
-      - name: "💋 Run Prettier"
-        run: "yarn prettier --check ."
 
   publish:
-    needs: [lint, prettier]
+    needs: [lint]
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+        
     steps:
-      - name: 🏗 Setup repo
-        uses: actions/checkout@v2
-
-      - name: 🏗 Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-          cache: yarn
+    - uses: actions/checkout@v3
+    - name: Setup node
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: yarn
 
       - name: 🏗 Setup Expo
         uses: expo/expo-github-action@v7
