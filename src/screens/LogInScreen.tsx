@@ -3,13 +3,14 @@ import React, { useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { useMutation } from "react-query";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { createUser, getUser } from "../api/users";
 import { UserCreate } from "../client";
-import { currentUser } from "../recoil/atom";
+import { currentUserState, isNewUserState } from "../recoil/atom";
 
 const LogInScreen = () => {
-  const [, setUser] = useRecoilState(currentUser);
+  const setUser = useSetRecoilState(currentUserState);
+  const setIsNewUser = useSetRecoilState(isNewUserState);
   const [usernameInput, setUsernameInput] = useState("");
 
   const { mutate: createUserMutate } = useMutation(createUser, {
@@ -30,10 +31,14 @@ const LogInScreen = () => {
       return;
     }
     getUser(sanitizedUsername)
-      .then(setUser)
+      .then((user) => {
+        setIsNewUser(false);
+        setUser(user);
+      })
       .catch((reason: AxiosError) => {
         switch (reason.status) {
           case 404: // Not Found
+            setIsNewUser(true);
             createUserMutate(sanitizedUsername);
             break;
           default:

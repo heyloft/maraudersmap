@@ -2,44 +2,26 @@ import React, { useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
 import MapView, { MAP_TYPES, Marker, UrlTile } from "react-native-maps";
 import { useRecoilValue } from "recoil";
-import { currentLocation, activeQuestsState } from "../recoil/atom";
-import { useQuery } from "react-query";
-import { FontAwesome5, AntDesign } from "@expo/vector-icons";
+import { currentLocationState, activeQuestItemsState } from "../recoil/atom";
 import { TILE_URL_TEMPLATE } from "@env";
 import MarkerCard from "./MarkerCard";
-import { QuestItem } from "../client";
 import { IconButton } from "react-native-paper";
-import { getQuestItems } from "../api/quests";
-
-enum MarkerType {
-  POI = "POI",
-  ITEM = "ITEM",
-}
+import { FontAwesome5 } from "@expo/vector-icons";
+import { faDotCircle as farDotCircle } from "@fortawesome/free-regular-svg-icons";
+import { ItemType } from "../client";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const Map = () => {
   const MIN_ZOOM_LEVEL = 17;
   const MAX_ZOOM_LEVEL = 21;
   const map = useRef<MapView | null>(null);
-  const location = useRecoilValue(currentLocation);
+  const location = useRecoilValue(currentLocationState);
   const [focusUserLocation, setFocusUserLocation] = useState(true);
   const [selectedMarker, setSelectedMarker] = useState<null | {
     id: string;
-    markerType: MarkerType;
   }>(null);
   const [animateToCoordinate, setAnimateToCoordinate] = useState(false);
-  const activeQuests = useRecoilValue(activeQuestsState);
-
-  const { data: questItems } = useQuery<QuestItem[], Error>(
-    ["questItems", activeQuests],
-    async () => {
-      if (activeQuests == null) {
-        return [];
-      }
-      return (
-        await Promise.all(activeQuests.map((q) => getQuestItems(q.quest.id)))
-      ).flat();
-    }
-  );
+  const questItems = useRecoilValue(activeQuestItemsState);
 
   useEffect(() => {
     if (focusUserLocation && location) {
@@ -52,16 +34,15 @@ const Map = () => {
     }
   }, [focusUserLocation, location]);
 
-  const getSelectedMarker = () => {
-    if (!selectedMarker || selectedMarker.markerType == MarkerType.POI)
-      return null;
+  const getSelectedMarkerItem = () => {
+    if (!selectedMarker) return null;
     return questItems?.find((item) => item.id == selectedMarker.id);
   };
 
   useEffect(() => {
     if (selectedMarker === null || !animateToCoordinate || !map.current) return;
-    const marker = getSelectedMarker();
-    if (!marker) return;
+    const marker = getSelectedMarkerItem();
+    if (!marker || !marker.location) return;
     map?.current?.animateToRegion(
       {
         latitude: marker.location[0],
@@ -109,34 +90,50 @@ const Map = () => {
               longitude: location.coords.longitude,
             }}
           >
-            <FontAwesome5 name="dot-circle" size={24} color="#1E88E5" />
+            <FontAwesomeIcon icon={farDotCircle} size={24} color="#1E88E5" />
           </Marker>
         )}
 
-        {questItems?.map((item) => (
-          <Marker
-            key={`item:${item.id}`}
-            coordinate={{
-              latitude: item.location[0],
-              longitude: item.location[1],
-            }}
-            onPress={() => {
-              setSelectedMarker({ id: item.id, markerType: MarkerType.ITEM });
-              setAnimateToCoordinate(true);
-            }}
-          >
-            <AntDesign
-              name="star"
-              size={
-                selectedMarker?.id == item.id &&
-                selectedMarker?.markerType == MarkerType.ITEM
-                  ? 50
-                  : 30
-              }
-              color="hotpink"
-            />
-          </Marker>
-        ))}
+        {questItems?.map(
+          (item) =>
+            item.location && (
+              <Marker
+                key={`item:${item.id}`}
+                coordinate={{
+                  latitude: item.location[0],
+                  longitude: item.location[1],
+                }}
+                onPress={() => {
+                  setSelectedMarker({
+                    id: item.id,
+                  });
+                  setAnimateToCoordinate(true);
+                }}
+              >
+                <FontAwesome5
+                  {...{
+                    [ItemType.KEY]: {
+                      name: "key",
+                      color: "orange",
+                    },
+                    [ItemType.COLLECTIBLE]: {
+                      name: "gem",
+                      color: "blue",
+                    },
+                    [ItemType.POI]: {
+                      name: "monument",
+                      color: "purple",
+                    },
+                    [ItemType.VOUCHER]: {
+                      name: "ticket-alt",
+                      color: "red",
+                    },
+                  }[item.item.item_type]}
+                  size={selectedMarker?.id == item.id ? 50 : 30}
+                />
+              </Marker>
+            )
+        )}
       </MapView>
       <IconButton
         style={{
@@ -153,8 +150,8 @@ const Map = () => {
       />
       {selectedMarker != null ? (
         <MarkerCard
-          title={getSelectedMarker()?.item.title}
-          description={getSelectedMarker()?.item.description}
+          title={getSelectedMarkerItem()?.item.title}
+          description={getSelectedMarkerItem()?.item.description}
           resetSelectedMarker={() => setSelectedMarker(null)}
         />
       ) : null}

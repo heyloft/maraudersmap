@@ -7,13 +7,18 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import AppNavigator from "./src/screens/AppNavigator";
 import { OpenAPI } from "./src/client";
 import { BASE_URL } from "@env";
+import { Alert } from "react-native";
 
 const queryClient = new QueryClient();
 
 export default function App() {
   useEffect(() => {
     OpenAPI.BASE = BASE_URL;
-    notificationSetup();
+    notificationSetup().then((error) => {
+      if (error) {
+        Alert.alert("Notification error", error);
+      }
+    });
   }, []);
 
   return (

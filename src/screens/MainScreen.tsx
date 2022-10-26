@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import {
   faBriefcase,
   faCircleQuestion,
@@ -13,16 +12,24 @@ import MapScreen from "./MapScreen";
 import QuestNavigator from "./QuestNavigator";
 import ScannerScreen from "./ScannerScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { getUserEventQuests, updateQuestParticipation } from "../api/quests";
+import {
+  getQuestItems,
+  getUserEventQuests,
+  updateQuestParticipation,
+} from "../api/quests";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   currentEventState,
-  currentUser,
+  currentUserState,
   activeQuestsState,
-  currentLocation,
+  currentLocationState,
+  questsDirtyState,
+  completedQuestsState,
+  isNewUserState,
+  activeQuestItemsState,
 } from "../recoil/atom";
 import { useQuery } from "react-query";
-import { QuestParticipation, QuestStatus } from "../client";
+import { QuestItem, QuestParticipation, QuestStatus } from "../client";
 import {
   getOneEvent,
   isRegisteredToEvent,
@@ -34,6 +41,8 @@ import ProfileScreen from "./ProfileScreen";
 import { questsWithinUnlockRadius } from "../location/locationUnlock";
 import { locationSetup } from "../location/location";
 import { sendNotification } from "../notifications/notifications";
+import QuestCompletedModal from "../components/QuestCompletedModal";
+import { Alert } from "react-native";
 
 export type RootStackParamList = {
   Map: undefined;
@@ -46,30 +55,83 @@ export type RootStackParamList = {
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
 const MainScreen = () => {
-  const user = useRecoilValue(currentUser);
-  const [location, setLocation] = useRecoilState(currentLocation);
+  const user = useRecoilValue(currentUserState);
+  const isNewUser = useRecoilValue(isNewUserState);
+  const [location, setLocation] = useRecoilState(currentLocationState);
 
   const [currentEvent, setCurrentEvent] = useRecoilState(currentEventState);
-  const setActiveQuests = useSetRecoilState(activeQuestsState);
+  const [userQuestsDirty, setUserQuestsDirty] =
+    useRecoilState(questsDirtyState);
+  const [activeQuests, setActiveQuests] = useRecoilState(activeQuestsState);
+  const setQuestItems = useSetRecoilState(activeQuestItemsState);
+
+  // Need some concept of quests that have very recently been completed in order to show the completion modal
+  const [completedQuests, setCompletedQuests] =
+    useRecoilState(completedQuestsState);
+  const [newlyCompletedQuests, setNewlyCompletedQuests] = useState<
+    QuestParticipation[] | null
+  >(null);
 
   // Simple "lock" to prevent multiple location unlocks for the same target
   // (which could cause things like multiple notifications)
   const [performingLocationUnlock, setPerformingLocationUnlock] =
     useState(false);
 
-  const { data: activeQuests, refetch: refetchActiveQuests } = useQuery<
+  const { refetch: refetchActiveQuests } = useQuery<
     QuestParticipation[],
     Error
-  >(["activeQuests", currentEvent], () =>
-    user && currentEvent
-      ? getUserEventQuests(user.id, currentEvent.id, QuestStatus.ACTIVE)
-      : []
+  >(
+    ["activeQuests", currentEvent],
+    () =>
+      user && currentEvent
+        ? getUserEventQuests(user.id, currentEvent.id, QuestStatus.ACTIVE)
+        : [],
+    {
+      onSuccess: setActiveQuests,
+    }
   );
 
-  // TODO: Would want to use onSuccess in useQuery instead, but it doesn't seem to be reactive enough
-  useEffect(
-    () => activeQuests && setActiveQuests(activeQuests),
-    [activeQuests]
+  useQuery<QuestItem[] | null, Error>(
+    ["questItems", activeQuests],
+    async () => {
+      return activeQuests == null
+        ? null
+        : (
+            await Promise.all(
+              activeQuests.map((q) => getQuestItems(q.quest.id))
+            )
+          ).flat();
+    },
+    {
+      onSuccess: setQuestItems,
+    }
+  );
+
+  const { refetch: refetchCompletedQuests } = useQuery<
+    QuestParticipation[] | null,
+    Error
+  >(
+    ["completedQuests", currentEvent],
+    () =>
+      user && currentEvent
+        ? getUserEventQuests(user.id, currentEvent.id, QuestStatus.FINISHED)
+        : null,
+    {
+      onSuccess: (data) => {
+        if (data) {
+          // Only recognize as new if alreadyCompletedQuests have been loaded at least once
+          // (to avoid recognizing completions from previous sessions as new)
+          if (completedQuests != null) {
+            // Compare with previous list of completed quests to find recent completions
+            const newCompletions = data.filter(
+              (q) => !completedQuests?.includes(q)
+            );
+            setNewlyCompletedQuests((v) => [...(v ?? []), ...newCompletions]);
+          }
+          setCompletedQuests(data);
+        }
+      },
+    }
   );
 
   const { data: unstartedQuests, refetch: refetchUnstartedQuests } = useQuery<
@@ -105,7 +167,12 @@ const MainScreen = () => {
     // Caution! State variables will be outdated when accessed from the location update callback,
     // since they where frozen when the callback subscription was created (in `locationSetup`).
     // This is why we only update the state, and use a seperate useEffect to react to the change
-    locationSetup(setLocation);
+    if (!locationSetup(setLocation)) {
+      Alert.alert(
+        "Permission required",
+        "This app wont work as intended without LocationPermissions"
+      );
+    }
   }, []);
 
   useEffect(() => {
@@ -142,9 +209,35 @@ const MainScreen = () => {
     }
   }, [location, unstartedQuests]);
 
+  useEffect(() => {
+    if (userQuestsDirty) {
+      setUserQuestsDirty(false);
+      refetchActiveQuests();
+      refetchCompletedQuests();
+    }
+  }, [userQuestsDirty]);
+
+  const dismissCompletedQuest = (q: QuestParticipation) => {
+    setNewlyCompletedQuests(
+      (completedQuests) =>
+        completedQuests?.filter((c) => c.quest.id !== q.quest.id) ?? null
+    );
+  };
+
   return (
     <Provider>
-      <WelcomeModal />
+      <>
+        {isNewUser && <WelcomeModal />}
+        {newlyCompletedQuests &&
+          newlyCompletedQuests.length > 0 &&
+          ((q) => (
+            <QuestCompletedModal
+              key={q.quest.id}
+              quest={q.quest}
+              onDismiss={() => dismissCompletedQuest(q)}
+            />
+          ))(newlyCompletedQuests[0])}
+      </>
       <Tab.Navigator>
         <Tab.Screen
           name="Map"

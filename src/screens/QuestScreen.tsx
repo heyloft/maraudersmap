@@ -6,13 +6,13 @@ import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import {
   questScreenVisibleQuestState,
-  userQuestsProgressState,
+  questsProgressState,
 } from "../recoil/atom";
 
 const QuestScreen = () => {
   const [showAbandonDialog, setShowAbandonDialog] = useState<boolean>(false);
   const questScreenVisibleQuest = useRecoilValue(questScreenVisibleQuestState);
-  const userQuestsProgress = useRecoilValue(userQuestsProgressState);
+  const userQuestsProgress = useRecoilValue(questsProgressState);
 
   return (
     questScreenVisibleQuest && (
