@@ -304,13 +304,13 @@ export class DefaultService {
    * Create Event Participation
    * @param userId
    * @param requestBody
-   * @returns EventParticipationCreate Successful Response
+   * @returns EventParticipation Successful Response
    * @throws ApiError
    */
   public static createEventParticipation(
     userId: string,
     requestBody: EventParticipationCreate
-  ): CancelablePromise<EventParticipationCreate> {
+  ): CancelablePromise<EventParticipation> {
     return __request(OpenAPI, {
       method: "POST",
       url: "/users/{user_id}/eventParticipations/",

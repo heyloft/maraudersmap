@@ -3,7 +3,6 @@
 /* eslint-disable */
 
 import type { Item } from "./Item";
-import type { Quest } from "./Quest";
 import type { UnlockMethod } from "./UnlockMethod";
 
 export type QuestItem = {
@@ -12,5 +11,4 @@ export type QuestItem = {
   id: string;
   item: Item;
   quest_id: string;
-  quest: Quest;
 };
