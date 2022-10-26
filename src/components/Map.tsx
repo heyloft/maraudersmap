@@ -81,6 +81,7 @@ const Map = () => {
           tileSize={512}
           maximumZ={MAX_ZOOM_LEVEL}
           maximumNativeZ={MAX_ZOOM_LEVEL}
+          shouldReplaceMapContent={true}
         />
 
         {location && (
