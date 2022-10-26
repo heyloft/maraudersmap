@@ -1,7 +1,7 @@
 import { View, StyleSheet } from "react-native";
 import { Modal, Portal, Text, Button } from "react-native-paper";
 import ConfettiCannon from "react-native-confetti-cannon";
-import { Quest } from "../client";
+import { ItemType, Quest, UnlockMethod } from "../client";
 
 const QuestCompletedModal = ({
   quest,
@@ -26,13 +26,67 @@ const QuestCompletedModal = ({
             origin={{ x: 0, y: 0 }}
           />
           <View style={styles.container}>
-            <Text style={{ fontSize: 27, fontWeight: "500" }}>
-              Quest Completed!
-            </Text>
-            <Text style={{ fontSize: 20, textAlign: "center", margin: 15 }}>
-              Congratulations! You have completed &apos;{quest.title}&apos;.
-            </Text>
-            <Button mode="contained" onPress={onDismiss} color="green">
+            <View style={{ display: "flex", alignItems: "center" }}>
+              <Text style={{ fontSize: 24, textAlign: "center" }}>
+                🎉 Congratulations 🎉
+              </Text>
+              <View style={{ marginTop: 10 }}>
+                <Text
+                  style={{ fontSize: 20, textAlign: "center", marginTop: 24 }}
+                >
+                  You have completed
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    textAlign: "center",
+                    fontStyle: "italic",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {quest.title}
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: 20,
+                borderRadius: 8,
+                backgroundColor: "#e0fce0",
+                padding: 16,
+                width: "100%",
+              }}
+            >
+              <Text style={{ fontSize: 18, color: "grey" }}>Rewards</Text>
+              <View style={{ marginTop: 6, marginBottom: 4 }}>
+                {quest.items
+                  .filter(
+                    (i) => i.unlock_method === UnlockMethod.QUEST_COMPLETION
+                  )
+                  .map((i) => (
+                    <Text
+                      key={i.id}
+                      style={{ fontSize: 18, fontWeight: "bold", marginTop: 4 }}
+                    >
+                      {{
+                        [ItemType.KEY]: "🔑",
+                        [ItemType.COLLECTIBLE]: "🏺",
+                        [ItemType.POI]: "🏟️",
+                        [ItemType.VOUCHER]: "🎟️",
+                      }[i.item.item_type] + " "}
+                      {i.item.title}
+                    </Text>
+                  ))}
+              </View>
+            </View>
+            <Button
+              mode="contained"
+              onPress={onDismiss}
+              color="green"
+              style={{ marginTop: 38 }}
+            >
               Continue
             </Button>
           </View>
@@ -46,15 +100,14 @@ export default QuestCompletedModal;
 
 const styles = StyleSheet.create({
   modalContainer: {
-    backgroundColor: "#F6F6F4",
     flex: 1,
-    margin: 30,
-    borderRadius: 10,
   },
   container: {
-    flex: 1,
-    padding: 10,
+    padding: 40,
     justifyContent: "space-around",
     alignItems: "center",
+    margin: 30,
+    borderRadius: 10,
+    backgroundColor: "#F6F6F4",
   },
 });
