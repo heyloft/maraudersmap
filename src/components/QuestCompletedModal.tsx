@@ -3,6 +3,13 @@ import { Modal, Portal, Text, Button } from "react-native-paper";
 import ConfettiCannon from "react-native-confetti-cannon";
 import { ItemType, Quest, UnlockMethod } from "../client";
 
+const ITEM_TYPE_EMOJIS = {
+  [ItemType.KEY]: "🔑",
+  [ItemType.COLLECTIBLE]: "🏺",
+  [ItemType.POI]: "🏟️",
+  [ItemType.VOUCHER]: "🎟️",
+};
+
 const QuestCompletedModal = ({
   quest,
   onDismiss,
@@ -70,12 +77,7 @@ const QuestCompletedModal = ({
                       key={i.id}
                       style={{ fontSize: 18, fontWeight: "bold", marginTop: 4 }}
                     >
-                      {{
-                        [ItemType.KEY]: "🔑",
-                        [ItemType.COLLECTIBLE]: "🏺",
-                        [ItemType.POI]: "🏟️",
-                        [ItemType.VOUCHER]: "🎟️",
-                      }[i.item.item_type] + " "}
+                      {ITEM_TYPE_EMOJIS[i.item.item_type] + " "}
                       {i.item.title}
                     </Text>
                   ))}

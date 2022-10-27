@@ -11,6 +11,25 @@ import { faDotCircle as farDotCircle } from "@fortawesome/free-regular-svg-icons
 import { ItemType } from "../client";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
+export const ITEM_TYPE_ICONS = {
+  [ItemType.KEY]: {
+    name: "key",
+    color: "orange",
+  },
+  [ItemType.COLLECTIBLE]: {
+    name: "gem",
+    color: "blue",
+  },
+  [ItemType.POI]: {
+    name: "monument",
+    color: "purple",
+  },
+  [ItemType.VOUCHER]: {
+    name: "ticket-alt",
+    color: "red",
+  },
+};
+
 const Map = () => {
   const MIN_ZOOM_LEVEL = 17;
   const MAX_ZOOM_LEVEL = 21;
@@ -112,24 +131,7 @@ const Map = () => {
                 }}
               >
                 <FontAwesome5
-                  {...{
-                    [ItemType.KEY]: {
-                      name: "key",
-                      color: "orange",
-                    },
-                    [ItemType.COLLECTIBLE]: {
-                      name: "gem",
-                      color: "blue",
-                    },
-                    [ItemType.POI]: {
-                      name: "monument",
-                      color: "purple",
-                    },
-                    [ItemType.VOUCHER]: {
-                      name: "ticket-alt",
-                      color: "red",
-                    },
-                  }[item.item.item_type]}
+                  {...ITEM_TYPE_ICONS[item.item.item_type]}
                   size={selectedMarker?.id == item.id ? 50 : 30}
                 />
               </Marker>
