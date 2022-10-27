@@ -13,7 +13,6 @@ export type { EventParticipationCreate } from "./models/EventParticipationCreate
 export type { EventParticipationUpdate } from "./models/EventParticipationUpdate";
 export type { HTTPValidationError } from "./models/HTTPValidationError";
 export type { Item } from "./models/Item";
-export type { ItemBase } from "./models/ItemBase";
 export type { ItemCreate } from "./models/ItemCreate";
 export type { ItemOwnership } from "./models/ItemOwnership";
 export type { ItemOwnershipCreate } from "./models/ItemOwnershipCreate";
@@ -30,7 +29,6 @@ export type { QuestParticipationUpdate } from "./models/QuestParticipationUpdate
 export { QuestStatus } from "./models/QuestStatus";
 export { UnlockMethod } from "./models/UnlockMethod";
 export type { User } from "./models/User";
-export type { UserBase } from "./models/UserBase";
 export type { UserCreate } from "./models/UserCreate";
 export type { ValidationError } from "./models/ValidationError";
 

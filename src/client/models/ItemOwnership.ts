@@ -2,12 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { ItemBase } from "./ItemBase";
-import type { UserBase } from "./UserBase";
+import type { Item } from "./Item";
+import type { User } from "./User";
 
 export type ItemOwnership = {
   obtained_at: string;
   id: string;
-  item: ItemBase;
-  owner: UserBase;
+  item: Item;
+  owner: User;
 };

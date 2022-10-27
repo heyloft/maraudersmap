@@ -9,6 +9,5 @@ export type Item = {
   item_type: ItemType;
   description?: string;
   icon: string;
-  location?: Array<any>;
   id: string;
 };

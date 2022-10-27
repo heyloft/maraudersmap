@@ -11,13 +11,14 @@
     "lint": "eslint --fix $INIT_CWD",
     "test": "jest",
     "format": "prettier --write $INIT_CWD",
-    "codegen": "dotenv -- bash -c 'openapi --input $URL_CODEGEN --output ./src/client --client axios && prettier --write ./src/client'"
+    "codegen": "dotenv -- bash -c 'echo `cd ./src/api/ && node preprocessSpec $URL_CODEGEN` > tmp-openapi.json && openapi --input tmp-openapi.json --output ./src/client --client axios && rm tmp-openapi.json && prettier --write ./src/client'"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-regular-svg-icons": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-native-fontawesome": "^0.3.0",
     "@react-navigation/bottom-tabs": "^6.4.0",

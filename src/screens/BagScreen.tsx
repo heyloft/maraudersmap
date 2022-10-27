@@ -7,14 +7,14 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useQuery } from "react-query";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { getItemOwnerships } from "../api/items";
 import { ItemOwnership, ItemType } from "../client";
 import ErrorAlert from "../components/ErrorAlert";
-import { currentUser } from "../recoil/atom";
+import { currentUserState } from "../recoil/atom";
 
 const BagScreen = () => {
-  const [user] = useRecoilState(currentUser);
+  const user = useRecoilValue(currentUserState);
   const { data, isLoading, isError } = useQuery<ItemOwnership[]>(
     ["item-ownerships", user?.id],
     () => (user ? getItemOwnerships(user.id) : []) //TODO: Better handling of null user
@@ -22,7 +22,7 @@ const BagScreen = () => {
 
   const DATA = [
     {
-      title: "Keys",
+      title: "🔑 Keys",
       data: data
         ? data.filter(
             (itemOwnership) => itemOwnership.item.item_type === ItemType.KEY
@@ -30,7 +30,15 @@ const BagScreen = () => {
         : [],
     },
     {
-      title: "Collectibles",
+      title: "🎟️ Vouchers",
+      data: data
+        ? data.filter(
+            (itemOwnership) => itemOwnership.item.item_type === ItemType.VOUCHER
+          )
+        : [],
+    },
+    {
+      title: "🏺 Collectibles",
       data: data
         ? data.filter(
             (itemOwnership) =>
@@ -38,7 +46,7 @@ const BagScreen = () => {
           )
         : [],
     },
-  ];
+  ].filter((s) => s.data.length > 0);
 
   const Item = ({
     title,
@@ -49,14 +57,16 @@ const BagScreen = () => {
   }) => (
     <View style={styles.item}>
       <Text style={styles.title}>{title}</Text>
-      <Text style={styles.subtitle}>
-        {description ? description : "This is an item"}
-      </Text>
+      {description && <Text style={styles.subtitle}>{description}</Text>}
     </View>
   );
 
   if (isLoading) {
-    return <ActivityIndicator animating={true} color={"purple"} />;
+    return (
+      <View style={{ marginTop: 32 }}>
+        <ActivityIndicator size={"large"} color="#1E88E5" />
+      </View>
+    );
   }
 
   if (isError) {
@@ -84,6 +94,15 @@ const BagScreen = () => {
             renderSectionHeader={({ section: { title } }) => (
               <Text style={styles.header}>{title}</Text>
             )}
+            ListEmptyComponent={
+              <View style={{ display: "flex", alignItems: "center" }}>
+                <Text style={{ fontSize: 24, marginTop: 6 }}>Bag is empty</Text>
+                <Text style={{ color: "grey", marginTop: 6 }}>
+                  Go find some fancy collectibles!
+                </Text>
+                <Text style={{ fontSize: 50, marginTop: 12 }}>🎒</Text>
+              </View>
+            }
           />
         ) : (
           <ErrorAlert>Not logged in</ErrorAlert>

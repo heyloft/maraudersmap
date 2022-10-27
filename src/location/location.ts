@@ -47,11 +47,11 @@ export const locationSetup = async (
 ) => {
   const { status } = await requestForegroundPermissionsAsync();
   if (status !== "granted") {
-    alert("Application wont work as intended without LocationPermissions.");
-    return;
+    return false;
   }
   watchPositionAsync(
     { accuracy: Accuracy.Highest, distanceInterval: 2 }, // TODO: Check best parameters for options.
     onLocationUpdate
   );
+  return true;
 };

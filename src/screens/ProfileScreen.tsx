@@ -3,10 +3,10 @@ import { View, StyleSheet, Text } from "react-native";
 import { Button } from "react-native-paper";
 import { useRecoilTransaction_UNSTABLE, useRecoilValue } from "recoil";
 import ErrorAlert from "../components/ErrorAlert";
-import { currentUser, resetUserStateTransaction } from "../recoil/atom";
+import { currentUserState, resetUserStateTransaction } from "../recoil/atom";
 
 const ProfileScreen = () => {
-  const user = useRecoilValue(currentUser);
+  const user = useRecoilValue(currentUserState);
 
   // Note: using "unstable" feature here, but current limitations don't affect this use case
   // (https://recoiljs.org/docs/api-reference/core/useRecoilTransaction#current-limitations-and-future-vision)
