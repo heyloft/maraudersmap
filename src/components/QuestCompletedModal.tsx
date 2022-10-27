@@ -17,6 +17,10 @@ const QuestCompletedModal = ({
   quest: Quest;
   onDismiss: () => void;
 }) => {
+  const completionItems = quest.items.filter(
+    (i) => i.unlock_method === UnlockMethod.QUEST_COMPLETION
+  );
+
   return (
     <>
       <Portal>
@@ -55,24 +59,21 @@ const QuestCompletedModal = ({
                 </Text>
               </View>
             </View>
-            <View
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginTop: 20,
-                borderRadius: 8,
-                backgroundColor: "#e0fce0",
-                padding: 16,
-                width: "100%",
-              }}
-            >
-              <Text style={{ fontSize: 18, color: "grey" }}>Rewards</Text>
-              <View style={{ marginTop: 6, marginBottom: 4 }}>
-                {quest.items
-                  .filter(
-                    (i) => i.unlock_method === UnlockMethod.QUEST_COMPLETION
-                  )
-                  .map((i) => (
+            {completionItems.length > 0 && (
+              <View
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginTop: 20,
+                  borderRadius: 8,
+                  backgroundColor: "#e0fce0",
+                  padding: 16,
+                  width: "100%",
+                }}
+              >
+                <Text style={{ fontSize: 18, color: "grey" }}>Rewards</Text>
+                <View style={{ marginTop: 6, marginBottom: 4 }}>
+                  {completionItems.map((i) => (
                     <Text
                       key={i.id}
                       style={{ fontSize: 18, fontWeight: "bold", marginTop: 4 }}
@@ -81,8 +82,9 @@ const QuestCompletedModal = ({
                       {i.item.title}
                     </Text>
                   ))}
+                </View>
               </View>
-            </View>
+            )}
             <Button
               mode="contained"
               onPress={onDismiss}
