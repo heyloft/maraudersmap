@@ -2,7 +2,7 @@ import { LocationObjectCoords } from "expo-location";
 import { distance } from "./location";
 import { Quest } from "../client";
 
-const defaultUnlockRadiusMeters = 20;
+const defaultUnlockRadiusMeters = 5;
 
 export const questsWithinUnlockRadius = (
   location: LocationObjectCoords,
