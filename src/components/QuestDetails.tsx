@@ -115,11 +115,7 @@ const QuestDetails = (props: QuestDetailsProps) => {
                     },
                     (_, i) => (
                       <View key={i} style={{ opacity: 0.4 }}>
-                        <ItemCard
-                          key={i}
-                          title={`🔒 Locked Key`}
-                          description={""}
-                        />
+                        <ItemCard key={i} title={`🔒 Locked Key`} />
                       </View>
                     )
                   )}

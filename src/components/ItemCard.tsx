@@ -6,7 +6,7 @@ const ItemCard = ({
   description,
 }: {
   title: string;
-  description: string | undefined;
+  description?: string;
 }) => (
   <View style={styles.item}>
     <Text style={styles.title}>{title}</Text>
