@@ -1,9 +1,13 @@
 import React from "react";
 import { ScrollView, Text, StyleSheet, View } from "react-native";
-import { List, Divider } from "react-native-paper";
+import { List, Divider, ActivityIndicator } from "react-native-paper";
 import { Button } from "react-native-paper";
-import { QuestParticipation } from "../client";
-import { QuestParticipationProgress } from "../recoil/atom";
+import { useQuery } from "react-query";
+import { useRecoilValue } from "recoil";
+import { getItemOwnerships } from "../api/items";
+import { ItemOwnership, ItemType, QuestParticipation } from "../client";
+import { currentUserState, QuestParticipationProgress } from "../recoil/atom";
+import ItemCard from "./ItemCard";
 
 interface QuestDetailsProps {
   // TODO: Replace with proper Quest interface.
@@ -38,6 +42,20 @@ interface QuestDetailsProps {
 // };
 
 const QuestDetails = (props: QuestDetailsProps) => {
+  const user = useRecoilValue(currentUserState);
+  const { data, isLoading, isError } = useQuery<ItemOwnership[]>(
+    ["item-ownerships", user?.id],
+    () => (user ? getItemOwnerships(user.id) : []) //TODO: Better handling of null user
+  );
+  const questKeysCollected = data
+    ? data.filter((itemOwnership) => {
+        const questItem = itemOwnership.quest_item;
+        return (
+          questItem.item.item_type == ItemType.KEY &&
+          questItem.quest_id == props.questParticipation.quest.id
+        );
+      })
+    : [];
   return (
     <ScrollView style={styles.textView}>
       <View style={styles.horizontalContainer}>
@@ -64,7 +82,7 @@ const QuestDetails = (props: QuestDetailsProps) => {
         <>
           <Divider />
           <List.Item
-            title={"Hidden Keys"}
+            title={"Unlocked Keys"}
             right={() =>
               props.questProgress ? (
                 <Text>
@@ -74,6 +92,33 @@ const QuestDetails = (props: QuestDetailsProps) => {
             }
             // onPress={() => console.log(`${item.title} was pressed.`)}
           />
+          <View>
+            {isError ? (
+              <Text>Error getting unlocked keys</Text>
+            ) : !isLoading ? (
+              <>
+                {questKeysCollected.map((key) => (
+                  <ItemCard
+                    key={key.id}
+                    title={key.quest_item.item.title}
+                    description={key.quest_item.item.description}
+                  />
+                ))}
+                {props.questProgress &&
+                  generateListWithIntegers(
+                    props.questProgress.total - props.questProgress.progress
+                  ).map((i) => (
+                    <ItemCard
+                      key={i}
+                      title={"Locked Key🚫"}
+                      description={"??????????????????"}
+                    />
+                  ))}
+              </>
+            ) : (
+              <ActivityIndicator />
+            )}
+          </View>
         </>
       </View>
       <View style={styles.container}>
@@ -120,3 +165,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
 });
+
+const generateListWithIntegers = (end: number) =>
+  end >= 0 ? [...Array(end).keys()] : [];

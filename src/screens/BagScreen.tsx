@@ -11,6 +11,7 @@ import { useRecoilValue } from "recoil";
 import { getItemOwnerships } from "../api/items";
 import { ItemOwnership, ItemType } from "../client";
 import ErrorAlert from "../components/ErrorAlert";
+import ItemCard from "../components/ItemCard";
 import { currentUserState } from "../recoil/atom";
 
 const BagScreen = () => {
@@ -21,15 +22,6 @@ const BagScreen = () => {
   );
 
   const DATA = [
-    {
-      title: "🔑 Keys",
-      data: data
-        ? data.filter(
-            (itemOwnership) =>
-              itemOwnership.quest_item.item.item_type === ItemType.KEY
-          )
-        : [],
-    },
     {
       title: "🎟️ Vouchers",
       data: data
@@ -49,19 +41,6 @@ const BagScreen = () => {
         : [],
     },
   ].filter((s) => s.data.length > 0);
-
-  const Item = ({
-    title,
-    description,
-  }: {
-    title: string;
-    description: string | undefined;
-  }) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
-      {description && <Text style={styles.subtitle}>{description}</Text>}
-    </View>
-  );
 
   if (isLoading) {
     return (
@@ -88,7 +67,7 @@ const BagScreen = () => {
             sections={DATA}
             keyExtractor={(item, index) => item.id + index}
             renderItem={({ item }) => (
-              <Item
+              <ItemCard
                 title={item.quest_item.item.title}
                 description={item.quest_item.item.description}
               />

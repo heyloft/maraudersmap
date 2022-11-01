@@ -34,7 +34,7 @@ export default function QrScanner() {
     onSuccess: (ownership) => {
       sendNotification(
         "Item Unlocked 🥳",
-        `You have unlocked '${ownership.item.title}'`
+        `You have unlocked '${ownership.quest_item.item.title}'`
       );
       userQuestsDirty(true);
     },
@@ -47,7 +47,7 @@ export default function QrScanner() {
     setScanned(true);
     if (user) {
       getItemOwnerships(user.id).then((ownerships) => {
-        if (ownerships.map((o) => o.item.id).includes(data)) {
+        if (ownerships.map((o) => o.quest_item.item.id).includes(data)) {
           Alert.alert(
             "🎒 Already unlocked",
             "You already have this item in your bag"
@@ -57,7 +57,7 @@ export default function QrScanner() {
         itemOwnershipMutation({
           obtainedAt: new Date().toISOString(),
           userId: user.id,
-          itemID: data,
+          questItemID: data,
         });
       });
     }

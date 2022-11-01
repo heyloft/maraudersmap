@@ -29,7 +29,7 @@ export const getUserQuestProgress = (
     return getItemOwnerships(user_id).then((userItems: ItemOwnership[]) => {
       // TODO: Check which quest item is from
       const userKeys = userItems.filter(
-        (ui) => ui.item.item_type == ItemType.KEY
+        (ui) => ui.quest_item.item.item_type == ItemType.KEY
       );
       return {
         total: questKeys.length,
