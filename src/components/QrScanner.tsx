@@ -47,7 +47,7 @@ export default function QrScanner() {
     setScanned(true);
     if (user) {
       getItemOwnerships(user.id).then((ownerships) => {
-        if (ownerships.map((o) => o.quest_item.item.id).includes(data)) {
+        if (ownerships.map((o) => o.quest_item.id).includes(data)) {
           Alert.alert(
             "🎒 Already unlocked",
             "You already have this item in your bag"
