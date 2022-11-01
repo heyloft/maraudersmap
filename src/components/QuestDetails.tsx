@@ -82,7 +82,7 @@ const QuestDetails = (props: QuestDetailsProps) => {
         <>
           <Divider />
           <List.Item
-            title={"Unlocked Keys"}
+            title={"🔑 Unlocked Keys"}
             right={() =>
               props.questProgress ? (
                 <Text>
@@ -90,7 +90,6 @@ const QuestDetails = (props: QuestDetailsProps) => {
                 </Text>
               ) : null
             }
-            // onPress={() => console.log(`${item.title} was pressed.`)}
           />
           <View>
             {isError ? (
