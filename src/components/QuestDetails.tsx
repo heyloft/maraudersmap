@@ -105,21 +105,24 @@ const QuestDetails = (props: QuestDetailsProps) => {
                   />
                 ))}
                 {props.questProgress &&
-                  [
-                    ...Array(
-                      Math.max(
+                  Array.from(
+                    {
+                      length: Math.max(
                         props.questProgress.total -
                           props.questProgress.progress,
                         0
-                      )
-                    ).keys(),
-                  ].map((i) => (
-                    <ItemCard
-                      key={i}
-                      title={"Locked Key🚫"}
-                      description={"??????????????????"}
-                    />
-                  ))}
+                      ),
+                    },
+                    (_, i) => (
+                      <View key={i} style={{ opacity: 0.4 }}>
+                        <ItemCard
+                          key={i}
+                          title={`🔒 Locked Key`}
+                          description={""}
+                        />
+                      </View>
+                    )
+                  )}
               </>
             ) : (
               <ActivityIndicator />
