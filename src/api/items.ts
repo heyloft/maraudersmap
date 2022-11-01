@@ -6,10 +6,10 @@ export const getItemOwnerships = (userID: string) =>
 export const createItemOwnership = (inp: {
   obtainedAt: string;
   userId: string;
-  itemID: string;
+  questItemID: string;
 }) => {
   return API.createItemOwnership(inp.userId, {
-    item_id: inp.itemID,
+    quest_item_id: inp.questItemID,
     obtained_at: inp.obtainedAt,
   });
 };

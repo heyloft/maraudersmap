@@ -25,7 +25,8 @@ const BagScreen = () => {
       title: "🔑 Keys",
       data: data
         ? data.filter(
-            (itemOwnership) => itemOwnership.item.item_type === ItemType.KEY
+            (itemOwnership) =>
+              itemOwnership.quest_item.item.item_type === ItemType.KEY
           )
         : [],
     },
@@ -33,7 +34,8 @@ const BagScreen = () => {
       title: "🎟️ Vouchers",
       data: data
         ? data.filter(
-            (itemOwnership) => itemOwnership.item.item_type === ItemType.VOUCHER
+            (itemOwnership) =>
+              itemOwnership.quest_item.item.item_type === ItemType.VOUCHER
           )
         : [],
     },
@@ -42,7 +44,7 @@ const BagScreen = () => {
       data: data
         ? data.filter(
             (itemOwnership) =>
-              itemOwnership.item.item_type === ItemType.COLLECTIBLE
+              itemOwnership.quest_item.item.item_type === ItemType.COLLECTIBLE
           )
         : [],
     },
@@ -87,8 +89,8 @@ const BagScreen = () => {
             keyExtractor={(item, index) => item.id + index}
             renderItem={({ item }) => (
               <Item
-                title={item.item.title}
-                description={item.item.description}
+                title={item.quest_item.item.title}
+                description={item.quest_item.item.description}
               />
             )}
             renderSectionHeader={({ section: { title } }) => (
