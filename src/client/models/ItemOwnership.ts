@@ -2,12 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Item } from "./Item";
+import type { QuestItem } from "./QuestItem";
 import type { User } from "./User";
 
 export type ItemOwnership = {
   obtained_at: string;
   id: string;
-  item: Item;
+  quest_item: QuestItem;
   owner: User;
 };
