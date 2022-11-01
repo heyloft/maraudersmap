@@ -6,7 +6,7 @@ import * as Device from "expo-device";
  */
 export const notificationSetup = () => {
   setNotificationHandler();
-  NotificationPermissions();
+  return notificationPermissions();
 };
 
 /**
@@ -25,7 +25,7 @@ const setNotificationHandler = () => {
 /**
  * Ask for the necessary permissions to send notifications to phone.
  */
-const NotificationPermissions = async () => {
+const notificationPermissions = async () => {
   if (Device.isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
@@ -35,12 +35,11 @@ const NotificationPermissions = async () => {
       finalStatus = status;
     }
     if (finalStatus !== "granted") {
-      alert("Failed to get permission for notifications!");
-      return;
+      return "Failed to get notification permissions!";
     }
-  } else {
-    alert("Must use physical device for Push Notifications");
+    return null;
   }
+  return "Must use physical device for Push Notifications";
 };
 
 /**

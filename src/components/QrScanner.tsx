@@ -5,84 +5,60 @@ import {
   StyleSheet,
   Button,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import QuestCompletedModal from "./QuestCompletedModal";
 import { Provider } from "react-native-paper";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  currentUser,
-  userQuestsProgressState,
-  userQuestsState,
-} from "../recoil/atom";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { currentUserState, questsDirtyState } from "../recoil/atom";
 import { useMutation } from "react-query";
-import createItemOwnership from "../api/create-item-ownership";
-import { Quest } from "../client";
-import { getUserQuestProgress } from "../api/quests";
 import { sendNotification } from "../notifications/notifications";
+import { createItemOwnership, getItemOwnerships } from "../api/items";
 
 export default function QrScanner() {
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [hasScannerPermissions, setHasScannerPermissions] = useState<
+    boolean | null
+  >(null);
   const [scanned, setScanned] = useState<boolean>(false);
-  const user = useRecoilValue(currentUser);
-  const userQuests = useRecoilValue(userQuestsState);
 
-  const [completedQuest, setCompletedQuest] = useState<Quest | null>(null);
+  const user = useRecoilValue(currentUserState);
+  const userQuestsDirty = useSetRecoilState(questsDirtyState);
 
-  const [userQuestsProgress, setUserQuestsProgress] = useRecoilState(
-    userQuestsProgressState
-  );
+  useEffect(() => {
+    BarCodeScanner.requestPermissionsAsync().then(({ status }) => {
+      setHasScannerPermissions(status === "granted");
+    });
+  }, []);
+
   const { mutate: itemOwnershipMutation } = useMutation(createItemOwnership, {
-    onSuccess: ({ data: ownership }) => {
+    onSuccess: (ownership) => {
       sendNotification(
         "Item Unlocked 🥳",
         `You have unlocked '${ownership.item.title}'`
       );
-      if (user && userQuests) {
-        userQuests.forEach((q) => {
-          getUserQuestProgress(user.id, q.quest.id).then((p) => {
-            setUserQuestsProgress((existing) => ({
-              ...existing,
-              [q.quest.id]: p,
-            }));
-          });
-        });
-      }
+      userQuestsDirty(true);
     },
     onError: () => {
-      alert("Oops! Something went wrong");
+      Alert.alert("😐️ Oops ", "Something went wrong...");
     },
   });
 
-  useEffect(() => {
-    if (userQuestsProgress) {
-      for (const [questId, p] of Object.entries(userQuestsProgress)) {
-        if (p.progress >= p.total && p.total > 0) {
-          const quest = userQuests?.find((q) => q.quest.id == questId)?.quest;
-          if (quest) {
-            setCompletedQuest(quest);
-          }
-        }
-      }
-    }
-  }, [userQuestsProgress]);
-
-  useEffect(() => {
-    const getBarCodeScannerPermissions = async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === "granted");
-    };
-
-    getBarCodeScannerPermissions();
-  }, []);
-
-  const handleBarCodeScanned = ({ data }: { type: string; data: string }) => {
+  const handleBarCodeScanned = ({ data }: { data: string }) => {
     setScanned(true);
     if (user) {
-      itemOwnershipMutation({
-        obtainedAt: new Date().toISOString(),
-        userId: user.id,
-        itemID: data,
+      getItemOwnerships(user.id).then((ownerships) => {
+        if (ownerships.map((o) => o.item.id).includes(data)) {
+          Alert.alert(
+            "🎒 Already unlocked",
+            "You already have this item in your bag"
+          );
+          return;
+        }
+        itemOwnershipMutation({
+          obtainedAt: new Date().toISOString(),
+          userId: user.id,
+          itemID: data,
+        });
       });
     }
   };
@@ -90,12 +66,12 @@ export default function QrScanner() {
   return (
     <Provider>
       <View style={styles.container}>
-        {hasPermission === null ? (
+        {hasScannerPermissions === null ? (
           <>
             <ActivityIndicator size={"large"} color="#1E88E5" />
             <Text style={{ marginTop: 20 }}>Requesting camera permission</Text>
           </>
-        ) : !hasPermission ? (
+        ) : !hasScannerPermissions ? (
           <Text>No access to camera</Text>
         ) : (
           <>
@@ -110,12 +86,6 @@ export default function QrScanner() {
                   onPress={() => setScanned(false)}
                 />
               </View>
-            )}
-            {completedQuest && (
-              <QuestCompletedModal
-                quest={completedQuest}
-                onDismiss={() => setCompletedQuest(null)}
-              />
             )}
           </>
         )}

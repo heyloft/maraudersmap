@@ -16,6 +16,13 @@ export const distance = (
   loc1: LocationObjectCoords,
   loc2: LocationObjectCoords
 ) => {
+  if (
+    Math.abs(loc1.latitude) > 90 ||
+    Math.abs(loc2.latitude) > 90 ||
+    Math.abs(loc1.longitude) > 180 ||
+    Math.abs(loc2.longitude) > 180
+  )
+    return NaN;
   const lat1 = (loc1.latitude * Math.PI) / 180; // Convert to radians.
   const long1 = (loc1.longitude * Math.PI) / 180;
   const lat2 = (loc2.latitude * Math.PI) / 180;
@@ -40,11 +47,11 @@ export const locationSetup = async (
 ) => {
   const { status } = await requestForegroundPermissionsAsync();
   if (status !== "granted") {
-    alert("Application wont work as intended without LocationPermissions.");
-    return;
+    return false;
   }
   watchPositionAsync(
     { accuracy: Accuracy.Highest, distanceInterval: 2 }, // TODO: Check best parameters for options.
     onLocationUpdate
   );
+  return true;
 };

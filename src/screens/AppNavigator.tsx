@@ -1,13 +1,13 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import { useRecoilState } from "recoil";
-import { currentUser } from "../recoil/atom";
+import { useRecoilValue } from "recoil";
+import { currentUserState } from "../recoil/atom";
 import LogInScreen from "./LogInScreen";
 import MainScreen from "./MainScreen";
 
 const Stack = createNativeStackNavigator();
 const AppScreen = () => {
-  const [user] = useRecoilState(currentUser);
+  const user = useRecoilValue(currentUserState);
 
   return (
     <Stack.Navigator>

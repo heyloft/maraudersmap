@@ -6,7 +6,8 @@
  * An enumeration.
  */
 export enum ItemType {
-  "_1" = 1,
-  "_2" = 2,
-  "_3" = 3,
+  COLLECTIBLE = "COLLECTIBLE",
+  VOUCHER = "VOUCHER",
+  KEY = "KEY",
+  POI = "POI",
 }

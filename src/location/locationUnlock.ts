@@ -1,39 +1,24 @@
-import { LocationObjectCoords, LocationObject } from "expo-location";
-import { sendNotification } from "../notifications/notifications";
+import { LocationObjectCoords } from "expo-location";
 import { distance } from "./location";
-import { Quest, QuestParticipation } from "../client";
-import updateQuestParticipation from "../api/updateQuestParticipation";
-import fetchUnstartedQuests from "../api/fetchUnstartedQuests";
+import { Quest } from "../client";
 
-const TRESHOLD = 20;
+const defaultUnlockRadiusMeters = 5;
 
-export const locationUnlock = async (
-  newLocation: LocationObject,
-  userID: string,
-  eventID: string
+export const questsWithinUnlockRadius = (
+  location: LocationObjectCoords,
+  quests: Quest[],
+  radiusMeters: number = defaultUnlockRadiusMeters
 ) => {
-  const lockedQuests: QuestParticipation[] = await fetchUnstartedQuests(
-    eventID,
-    userID
-  );
-
-  const unlocked: Quest[] = [];
-  lockedQuests?.forEach((qp) => {
-    const location: LocationObjectCoords = {
-      latitude: qp.quest.location[0],
-      longitude: qp.quest.location[1],
+  return quests.filter((quest) => {
+    const questLocation: LocationObjectCoords = {
+      latitude: quest.location[0],
+      longitude: quest.location[1],
       accuracy: null,
       altitude: null,
       altitudeAccuracy: null,
       heading: null,
       speed: null,
     };
-    const dist = distance(newLocation.coords, location);
-    if (dist < TRESHOLD) {
-      sendNotification("Quest Unlocked ✨", `You unlocked '${qp.quest.title}'`);
-      unlocked.push(qp.quest);
-      updateQuestParticipation(userID, qp.quest.id, 3);
-    }
+    return distance(location, questLocation) < radiusMeters;
   });
-  return unlocked.length > 0;
 };

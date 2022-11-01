@@ -1,0 +1,36 @@
+on:
+  push:
+    branches:
+      - production
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: yarn
+
+      - name: 🏗 Setup Expo
+        uses: expo/expo-github-action@v7
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: yarn install
+
+      - name: 🌍 Decode .env from base64 secret
+        env:
+          ENV_FILE_BASE64: ${{ secrets.ENV_FILE_BASE64_PROD }}
+        run: echo $ENV_FILE_BASE64 | base64 --decode > .env
+
+      - name: 🚀 Publish app
+        run: expo publish --release-channel production --non-interactive

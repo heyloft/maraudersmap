@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { QuestItem } from "./QuestItem";
 import type { UnlockMethod } from "./UnlockMethod";
 
 export type Quest = {
@@ -13,4 +14,5 @@ export type Quest = {
   location: Array<any>;
   event_id: string;
   id: string;
+  items: Array<QuestItem>;
 };

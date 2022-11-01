@@ -1,77 +1,46 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
 import MapView, { MAP_TYPES, Marker, UrlTile } from "react-native-maps";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { LocationObject } from "expo-location";
-import { locationSetup } from "../location/location";
-import {
-  currentEventState,
-  currentLocation,
-  userQuestsState,
-} from "../recoil/atom";
-import { useQuery } from "react-query";
-import { FontAwesome5, AntDesign } from "@expo/vector-icons";
+import { useRecoilValue } from "recoil";
+import { currentLocationState, activeQuestItemsState } from "../recoil/atom";
 import { TILE_URL_TEMPLATE } from "@env";
 import MarkerCard from "./MarkerCard";
-import { QuestItem } from "../client";
 import { IconButton } from "react-native-paper";
-import { locationUnlock } from "../location/locationUnlock";
-import { currentUser } from "../recoil/atom";
-import { getQuestItems, getUserEventActiveQuests } from "../api/quests";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { faDotCircle as farDotCircle } from "@fortawesome/free-regular-svg-icons";
+import { ItemType } from "../client";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
-enum MarkerType {
-  POI = "POI",
-  ITEM = "ITEM",
-}
+export const ITEM_TYPE_ICONS = {
+  [ItemType.KEY]: {
+    name: "key",
+    color: "orange",
+  },
+  [ItemType.COLLECTIBLE]: {
+    name: "gem",
+    color: "blue",
+  },
+  [ItemType.POI]: {
+    name: "monument",
+    color: "purple",
+  },
+  [ItemType.VOUCHER]: {
+    name: "ticket-alt",
+    color: "red",
+  },
+};
 
 const Map = () => {
   const MIN_ZOOM_LEVEL = 17;
   const MAX_ZOOM_LEVEL = 21;
   const map = useRef<MapView | null>(null);
-  const [location, setLocation] = useRecoilState(currentLocation);
+  const location = useRecoilValue(currentLocationState);
   const [focusUserLocation, setFocusUserLocation] = useState(true);
   const [selectedMarker, setSelectedMarker] = useState<null | {
     id: string;
-    markerType: MarkerType;
   }>(null);
   const [animateToCoordinate, setAnimateToCoordinate] = useState(false);
-  const user = useRecoilValue(currentUser);
-  const [userQuests, setUserQuests] = useRecoilState(userQuestsState);
-  const currentEvent = useRecoilValue(currentEventState);
-
-  const { data: questItems } = useQuery<QuestItem[], Error>(
-    ["questItems", userQuests],
-    async () => {
-      if (userQuests == null) {
-        return [];
-      }
-      return (
-        await Promise.all(userQuests.map((q) => getQuestItems(q.quest.id)))
-      ).flat();
-    }
-  );
-
-  const onPositionChange = (newLocation: LocationObject) => {
-    setLocation(newLocation);
-    if (user && currentEvent) {
-      locationUnlock(newLocation, user.id, currentEvent.id).then(
-        (someUnlocked) => {
-          if (someUnlocked && currentEvent) {
-            getUserEventActiveQuests(user.id, currentEvent.id).then(
-              setUserQuests
-            );
-          }
-        }
-      );
-    }
-  };
-
-  useEffect(() => {
-    // Caution! Remember that all state from recoil will be frozen upon listener setup
-    // That is we we have 'currentEvent' in the dependency list
-    // TODO: Remove subscribers when new ones are added, or just don't do it this way...
-    locationSetup(onPositionChange);
-  }, [currentEvent]);
+  const questItems = useRecoilValue(activeQuestItemsState);
 
   useEffect(() => {
     if (focusUserLocation && location) {
@@ -84,17 +53,15 @@ const Map = () => {
     }
   }, [focusUserLocation, location]);
 
-  const getSelectedMarker = () => {
+  const getSelectedMarkerItem = () => {
     if (!selectedMarker) return null;
-    return selectedMarker.markerType == MarkerType.POI
-      ? null
-      : questItems?.find((item) => item.id == selectedMarker.id);
+    return questItems?.find((item) => item.id == selectedMarker.id);
   };
 
   useEffect(() => {
     if (selectedMarker === null || !animateToCoordinate || !map.current) return;
-    const marker = getSelectedMarker();
-    if (!marker) return;
+    const marker = getSelectedMarkerItem();
+    if (!marker || !marker.location) return;
     map?.current?.animateToRegion(
       {
         latitude: marker.location[0],
@@ -133,6 +100,7 @@ const Map = () => {
           tileSize={512}
           maximumZ={MAX_ZOOM_LEVEL}
           maximumNativeZ={MAX_ZOOM_LEVEL}
+          shouldReplaceMapContent={true}
         />
 
         {location && (
@@ -142,34 +110,33 @@ const Map = () => {
               longitude: location.coords.longitude,
             }}
           >
-            <FontAwesome5 name="dot-circle" size={24} color="#1E88E5" />
+            <FontAwesomeIcon icon={farDotCircle} size={24} color="#1E88E5" />
           </Marker>
         )}
 
-        {questItems?.map((item) => (
-          <Marker
-            key={`item:${item.id}`}
-            coordinate={{
-              latitude: item.location[0],
-              longitude: item.location[1],
-            }}
-            onPress={() => {
-              setSelectedMarker({ id: item.id, markerType: MarkerType.ITEM });
-              setAnimateToCoordinate(true);
-            }}
-          >
-            <AntDesign
-              name="star"
-              size={
-                selectedMarker?.id == item.id &&
-                selectedMarker?.markerType == MarkerType.ITEM
-                  ? 50
-                  : 30
-              }
-              color="hotpink"
-            />
-          </Marker>
-        ))}
+        {questItems?.map(
+          (item) =>
+            item.location && (
+              <Marker
+                key={`item:${item.id}`}
+                coordinate={{
+                  latitude: item.location[0],
+                  longitude: item.location[1],
+                }}
+                onPress={() => {
+                  setSelectedMarker({
+                    id: item.id,
+                  });
+                  setAnimateToCoordinate(true);
+                }}
+              >
+                <FontAwesome5
+                  {...ITEM_TYPE_ICONS[item.item.item_type]}
+                  size={selectedMarker?.id == item.id ? 50 : 30}
+                />
+              </Marker>
+            )
+        )}
       </MapView>
       <IconButton
         style={{
@@ -186,8 +153,8 @@ const Map = () => {
       />
       {selectedMarker != null ? (
         <MarkerCard
-          title={getSelectedMarker()?.item.title}
-          description={getSelectedMarker()?.item.description}
+          title={getSelectedMarkerItem()?.item.title}
+          description={getSelectedMarkerItem()?.item.description}
           resetSelectedMarker={() => setSelectedMarker(null)}
         />
       ) : null}

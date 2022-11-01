@@ -1,12 +1,8 @@
-import genericFetch from "./utils/generic-fetch";
-import genericPost from "./utils/generic-post";
+import { DefaultService as API } from "../client";
 
-export const getUser = (username: string) => {
-  return genericFetch("users/by_username/" + username);
-};
+export const getUser = (username: string) => API.readUserByUsername(username);
 
-export const createUser = (username: string) => {
-  return genericPost("users/", {
+export const createUser = (username: string) =>
+  API.createUser({
     username: username,
   });
-};

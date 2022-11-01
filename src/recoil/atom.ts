@@ -1,6 +1,33 @@
-import { atom } from "recoil";
+import { atom, TransactionInterface_UNSTABLE } from "recoil";
 import { LocationObject } from "expo-location";
-import { User, Event, QuestParticipation } from "../client";
+import { User, Event, QuestParticipation, QuestItem } from "../client";
+
+export const resetUserStateTransaction: (
+  _: TransactionInterface_UNSTABLE
+) => () => void =
+  ({ reset }) =>
+  () => {
+    reset(currentLocationState);
+    reset(isNewUserState);
+    reset(currentUserState);
+    reset(currentEventState);
+    reset(activeQuestsState);
+    reset(activeQuestItemsState);
+    reset(completedQuestsState);
+    reset(questsProgressState);
+    reset(questsDirtyState);
+    reset(questScreenVisibleQuestState);
+  };
+
+export const currentUserState = atom<User | null>({
+  key: "currentUser",
+  default: null,
+});
+
+export const isNewUserState = atom<boolean | null>({
+  key: "isNewUser",
+  default: null,
+});
 
 const defaultLocation: LocationObject = {
   timestamp: Date.now(),
@@ -15,23 +42,13 @@ const defaultLocation: LocationObject = {
   },
 };
 
-export const currentLocation = atom({
-  key: "currentLocation", // unique ID (with respect to other atoms/selectors)
-  default: defaultLocation, // default value (aka initial value)
-});
-
-export const currentUser = atom<User | null>({
-  key: "currentUser",
-  default: null,
+export const currentLocationState = atom({
+  key: "currentLocation",
+  default: defaultLocation,
 });
 
 export const currentEventState = atom<Event | null>({
   key: "currentEvent",
-  default: null,
-});
-
-export const userQuestsState = atom<QuestParticipation[] | null>({
-  key: "userQuests",
   default: null,
 });
 
@@ -40,11 +57,31 @@ export type QuestParticipationProgress = {
   progress: number;
 };
 
-export const userQuestsProgressState = atom<{
+export const activeQuestsState = atom<QuestParticipation[] | null>({
+  key: "activeQuests",
+  default: null,
+});
+
+export const activeQuestItemsState = atom<QuestItem[] | null>({
+  key: "activeQuestItems",
+  default: null,
+});
+
+export const completedQuestsState = atom<QuestParticipation[] | null>({
+  key: "userQuestsCompleted",
+  default: null,
+});
+
+export const questsProgressState = atom<{
   [key: string]: QuestParticipationProgress;
 } | null>({
   key: "userQuestsProgress",
   default: null,
+});
+
+export const questsDirtyState = atom<boolean>({
+  key: "userQuestsDirty",
+  default: false,
 });
 
 export const questScreenVisibleQuestState = atom<QuestParticipation | null>({

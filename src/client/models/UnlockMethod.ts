@@ -6,6 +6,7 @@
  * An enumeration.
  */
 export enum UnlockMethod {
-  "_1" = 1,
-  "_2" = 2,
+  QR_CODE = "QR_CODE",
+  LOCATION = "LOCATION",
+  QUEST_COMPLETION = "QUEST_COMPLETION",
 }

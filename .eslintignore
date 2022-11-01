@@ -1,2 +1,3 @@
 # Patterns to be ignored by ESLint
 yarn.lock
+src/api/preprocessSpec.js

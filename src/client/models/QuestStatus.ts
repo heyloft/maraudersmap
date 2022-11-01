@@ -6,8 +6,8 @@
  * An enumeration.
  */
 export enum QuestStatus {
-  "_1" = 1,
-  "_2" = 2,
-  "_3" = 3,
-  "_4" = 4,
+  HIDDEN = "HIDDEN",
+  UNSTARTED = "UNSTARTED",
+  ACTIVE = "ACTIVE",
+  FINISHED = "FINISHED",
 }
