@@ -105,9 +105,15 @@ const QuestDetails = (props: QuestDetailsProps) => {
                   />
                 ))}
                 {props.questProgress &&
-                  generateListWithIntegers(
-                    props.questProgress.total - props.questProgress.progress
-                  ).map((i) => (
+                  [
+                    ...Array(
+                      Math.max(
+                        props.questProgress.total -
+                          props.questProgress.progress,
+                        0
+                      )
+                    ).keys(),
+                  ].map((i) => (
                     <ItemCard
                       key={i}
                       title={"Locked Key🚫"}
@@ -165,6 +171,3 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
 });
-
-const generateListWithIntegers = (end: number) =>
-  end >= 0 ? [...Array(end).keys()] : [];
