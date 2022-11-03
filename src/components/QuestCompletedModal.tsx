@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { Modal, Portal, Text, Button } from "react-native-paper";
 import ConfettiCannon from "react-native-confetti-cannon";
 import { ItemType, Quest, UnlockMethod } from "../client";
@@ -13,9 +13,11 @@ const ITEM_TYPE_EMOJIS = {
 const QuestCompletedModal = ({
   quest,
   onDismiss,
+  onNavigateToBag,
 }: {
   quest: Quest;
   onDismiss: () => void;
+  onNavigateToBag: () => void;
 }) => {
   const completionItems = quest.items.filter(
     (i) => i.unlock_method === UnlockMethod.QUEST_COMPLETION
@@ -29,13 +31,6 @@ const QuestCompletedModal = ({
           onDismiss={onDismiss}
           contentContainerStyle={styles.modalContainer}
         >
-          <ConfettiCannon
-            count={50}
-            fadeOut={true}
-            explosionSpeed={1500}
-            fallSpeed={2000}
-            origin={{ x: 0, y: 0 }}
-          />
           <View style={styles.container}>
             <View style={{ display: "flex", alignItems: "center" }}>
               <Text style={{ fontSize: 24, textAlign: "center" }}>
@@ -67,7 +62,8 @@ const QuestCompletedModal = ({
                   marginTop: 20,
                   borderRadius: 8,
                   backgroundColor: "#e0fce0",
-                  padding: 16,
+                  paddingTop: 16,
+                  paddingBottom: 16,
                   width: "100%",
                 }}
               >
@@ -85,15 +81,40 @@ const QuestCompletedModal = ({
                 </View>
               </View>
             )}
-            <Button
-              mode="contained"
-              onPress={onDismiss}
-              color="green"
-              style={{ marginTop: 38 }}
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-around",
+                width: "100%",
+                marginTop: 38,
+              }}
             >
-              Continue
-            </Button>
+              <Button mode="contained" onPress={onDismiss} color="white">
+                Close
+              </Button>
+              {completionItems.length > 0 && (
+                <Button
+                  mode="contained"
+                  onPress={onNavigateToBag}
+                  color="green"
+                  style={{ marginLeft: 12 }}
+                >
+                  Go to Bag
+                </Button>
+              )}
+            </View>
           </View>
+          {Platform.OS == "ios" && (
+            // Android version is way too laggy
+            <ConfettiCannon
+              count={50}
+              fadeOut={true}
+              explosionSpeed={1500}
+              fallSpeed={2000}
+              origin={{ x: 0, y: 0 }}
+            />
+          )}
         </Modal>
       </Portal>
     </>
@@ -107,7 +128,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    padding: 40,
+    paddingTop: 40,
+    paddingBottom: 40,
+    paddingStart: 16,
+    paddingEnd: 16,
     justifyContent: "space-around",
     alignItems: "center",
     margin: 30,
