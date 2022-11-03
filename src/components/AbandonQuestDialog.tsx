@@ -21,8 +21,8 @@ const AbandonQuestDialog = (props: deleteQuestDialogProps) => {
           <Dialog.Title>Abandon Quest</Dialog.Title>
           <Dialog.Content>
             <Paragraph>
-              Are you sure you want to abandon this quest? This action can not
-              be undone.
+              You are trapped in the realm of the dead, you cannot leave without
+              the key.
             </Paragraph>
           </Dialog.Content>
           <Dialog.Actions style={{ justifyContent: "space-between" }}>
