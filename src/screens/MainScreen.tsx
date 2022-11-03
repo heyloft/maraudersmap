@@ -43,8 +43,11 @@ import { locationSetup } from "../location/location";
 import { sendNotification } from "../notifications/notifications";
 import QuestCompletedModal from "../components/QuestCompletedModal";
 import { Alert } from "react-native";
+import { AppStackParamList } from "./AppNavigator";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { CompositeScreenProps } from "@react-navigation/native";
 
-export type RootStackParamList = {
+export type TabStackParamList = {
   Map: undefined;
   Scanner: undefined;
   QuestNavigator: undefined;
@@ -52,9 +55,14 @@ export type RootStackParamList = {
   Profile: undefined;
 };
 
-const Tab = createBottomTabNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<TabStackParamList>();
 
-const MainScreen = () => {
+const MainScreen = ({
+  navigation,
+}: CompositeScreenProps<
+  NativeStackScreenProps<AppStackParamList, "Main">,
+  NativeStackScreenProps<TabStackParamList>
+>) => {
   const user = useRecoilValue(currentUserState);
   const isNewUser = useRecoilValue(isNewUserState);
   const [location, setLocation] = useRecoilState(currentLocationState);
@@ -235,6 +243,10 @@ const MainScreen = () => {
               key={q.quest.id}
               quest={q.quest}
               onDismiss={() => dismissCompletedQuest(q)}
+              onNavigateToBag={() => {
+                dismissCompletedQuest(q);
+                navigation.navigate("Bag");
+              }}
             />
           ))(newlyCompletedQuests[0])}
       </>
