@@ -17,12 +17,18 @@ const WelcomeModal = () => {
       >
         <View style={styles.container}>
           <Text style={{ fontSize: 27 }}>👋</Text>
-          <Text style={{ fontSize: 26, textAlign: "center" }}>
-            Welcome <Text style={{ color: "green" }}>{user?.username}</Text>
+          <Text style={{ fontSize: 18, textAlign: "center", marginTop: 6 }}>
+            Hi, <Text style={{ color: "green" }}>{user?.username}</Text>
           </Text>
-          <Text style={{ fontSize: 20, textAlign: "center", marginTop: 25 }}>
-            {"Welcome to Cyber Quest"}
+          <Text style={{ fontSize: 26, textAlign: "center", marginTop: 18 }}>
+            Welcome to
           </Text>
+          <Text
+            style={{ fontSize: 26, textAlign: "center", fontWeight: "bold" }}
+          >
+            Cyber Quest
+          </Text>
+          {/* <Text style={{ fontSize: 27, marginTop: 25 }}></Text> */}
           <Text style={{ fontSize: 18, textAlign: "center", marginTop: 25 }}>
             Despite being inside, you feel a soft wind.
           </Text>
@@ -33,7 +39,7 @@ const WelcomeModal = () => {
             There might be something of intrigue to you in the place that
             honours the dead, the wind whispers.
           </Text>
-          <Text style={{ fontSize: 27 }}>🗺️🔎</Text>
+          <Text style={{ fontSize: 27 }}>🍃💀</Text>
           <Button
             style={{ marginTop: 38 }}
             mode="contained"

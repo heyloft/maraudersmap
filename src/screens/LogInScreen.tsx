@@ -1,6 +1,12 @@
 import { AxiosError } from "axios";
 import React, { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { useMutation } from "react-query";
 import { useSetRecoilState } from "recoil";
@@ -13,12 +19,15 @@ const LogInScreen = () => {
   const setIsNewUser = useSetRecoilState(isNewUserState);
   const [usernameInput, setUsernameInput] = useState("");
 
-  const { mutate: createUserMutate } = useMutation(createUser, {
-    onSuccess: (user) => setUser(user),
-    onError: (e) => {
-      console.error(e);
-    },
-  });
+  const [fetchUserLoading, setFetchUserLoading] = useState(false);
+
+  const { mutate: createUserMutate, isLoading: createUserLoading } =
+    useMutation(createUser, {
+      onSuccess: (user) => setUser(user),
+      onError: (e) => {
+        console.error(e);
+      },
+    });
 
   const usernameIsValid = (username: string) => {
     return username != null && username.trim().length > 0;
@@ -30,6 +39,7 @@ const LogInScreen = () => {
     if (!usernameIsValid(sanitizedUsername)) {
       return;
     }
+    setFetchUserLoading(true);
     getUser(sanitizedUsername)
       .then((user) => {
         setIsNewUser(false);
@@ -45,45 +55,60 @@ const LogInScreen = () => {
             console.error(reason.message);
             break;
         }
+      })
+      .finally(() => {
+        setFetchUserLoading(false);
       });
   };
+
+  const loading = fetchUserLoading || createUserLoading;
+
   return (
-    <View style={styles.container}>
-      <View style={{ marginBottom: 110 }}>
-        <Text style={styles.header}>Welcome to Cyber Quest 🔎 </Text>
-        <Text style={styles.subheader}>
-          Virtual journeys in physical realities
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={styles.container}
+    >
+      <View style={styles.titleContainer}>
+        <Text style={styles.titleIcon}>🗺️</Text>
+        <Text style={styles.titleText}>Welcome to Cyber Quest</Text>
+        <Text style={styles.infoText}>
+          virtual journeys in physical realities
         </Text>
-        <Text style={styles.subheader}>
-          Virtual quests in physical realities
-        </Text>
       </View>
-      <View>
-        <Text>What is your name, mysterious traveller?</Text>
+      <View style={styles.formContainer}>
+        <View style={styles.usernameInputContainer}>
+          <Text style={styles.infoText}>
+            What is your name, mysterious traveller?
+          </Text>
+          <TextInput
+            style={styles.usernameInput}
+            underlineColor={"#1E88E5"}
+            activeUnderlineColor={"#1E88E5"}
+            label="Name"
+            value={usernameInput}
+            autoCapitalize="none"
+            autoCorrect={false}
+            onChangeText={(text) => setUsernameInput(text)}
+          />
+          <Text style={styles.infoText}>
+            give yourself a unique and strange username to begin your journey
+          </Text>
+        </View>
+        <Button
+          mode="contained"
+          onPress={() => loginOrSignup({ username: usernameInput })}
+          style={styles.loginButton}
+          color={"#1E88E5"}
+          icon={"login"}
+          disabled={!usernameIsValid(usernameInput)}
+          loading={loading}
+        >
+          <Text style={styles.loginButtonText}>
+            {loading ? "Signing up" : "Sign up"}
+          </Text>
+        </Button>
       </View>
-      <View style={styles.containerChild}>
-        <TextInput
-          style={styles.loginUsernameInput}
-          label="name"
-          value={usernameInput}
-          autoCapitalize="none"
-          autoCorrect={false}
-          onChangeText={(text) => setUsernameInput(text)}
-        />
-      </View>
-      <View>
-        <Text>Choose a unique name to start your journey </Text>
-      </View>
-      <Button
-        mode="contained"
-        onPress={() => loginOrSignup({ username: usernameInput })}
-        style={styles.loginButton}
-        icon={"login"}
-        disabled={!usernameIsValid(usernameInput)}
-      >
-        <Text style={styles.loginButtonText}>Sign up</Text>
-      </Button>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -92,34 +117,53 @@ export default LogInScreen;
 const styles = StyleSheet.create({
   container: {
     padding: 0,
+    margin: 0,
     width: "100%",
     height: "100%",
     display: "flex",
     alignItems: "center",
-    marginTop: 100,
-    marginBottom: 200,
+    justifyContent: "center",
   },
-  containerChild: {
-    height: 70,
+  titleContainer: {
+    display: "flex",
+    alignItems: "center",
+    marginTop: Platform.OS === "ios" ? -60 : 0,
+    textAlign: "center",
+  },
+  titleIcon: {
+    fontSize: 69,
+  },
+  titleText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  infoText: {
+    fontSize: 14,
+    fontStyle: "italic",
+    textAlign: "center",
+    color: "grey",
+  },
+  formContainer: {
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    marginTop: 40,
+  },
+  usernameInputContainer: {
     width: "90%",
     maxWidth: 280,
   },
-  loginUsernameInput: {
+  usernameInput: {
     fontSize: 16,
     padding: 0,
+    marginTop: 10,
+    marginBottom: 10,
   },
   loginButton: {
     marginTop: 20,
   },
   loginButtonText: {
     fontSize: 14,
-  },
-  header: {
-    fontSize: 29,
-    marginBottom: 50,
-  },
-  subheader: {
-    fontSize: 20,
-    textAlign: "center",
   },
 });
