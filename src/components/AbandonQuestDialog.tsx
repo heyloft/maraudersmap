@@ -7,10 +7,6 @@ interface deleteQuestDialogProps {
 }
 
 const AbandonQuestDialog = (props: deleteQuestDialogProps) => {
-  const onDeleteQuest = () => {
-    props.setVisible(false);
-  };
-
   return (
     <View>
       <Portal>
@@ -28,9 +24,6 @@ const AbandonQuestDialog = (props: deleteQuestDialogProps) => {
           <Dialog.Actions style={{ justifyContent: "space-between" }}>
             <Button mode="outlined" onPress={() => props.setVisible(false)}>
               Cancel
-            </Button>
-            <Button mode="outlined" color="red" onPress={onDeleteQuest}>
-              Abandon
             </Button>
           </Dialog.Actions>
         </Dialog>
