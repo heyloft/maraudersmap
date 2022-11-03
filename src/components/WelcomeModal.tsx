@@ -21,10 +21,17 @@ const WelcomeModal = () => {
             Welcome <Text style={{ color: "green" }}>{user?.username}</Text>
           </Text>
           <Text style={{ fontSize: 20, textAlign: "center", marginTop: 25 }}>
-            {"Hi, and welcome to Marauder's Map!"}
+            {"Welcome to Cyber Quest"}
           </Text>
-          <Text style={{ fontSize: 20, textAlign: "center", marginTop: 25 }}>
-            You have to do a location unlock to be able to start the journey...
+          <Text style={{ fontSize: 18, textAlign: "center", marginTop: 25 }}>
+            Despite being inside, you feel a soft wind.
+          </Text>
+          <Text style={{ fontSize: 18, textAlign: "center", marginTop: 9 }}>
+            It whispers words in the language of the dead.
+          </Text>
+          <Text style={{ fontSize: 18, textAlign: "center", marginTop: 9 }}>
+            There might be something of intrigue to you in the place that
+            honours the dead, the wind whispers.
           </Text>
           <Text style={{ fontSize: 27 }}>🗺️🔎</Text>
           <Button
@@ -33,7 +40,7 @@ const WelcomeModal = () => {
             onPress={() => setShown(true)}
             color="green"
           >
-            Get started
+            Procceed
           </Button>
         </View>
       </Modal>

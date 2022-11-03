@@ -21,7 +21,7 @@ const AppScreen = () => {
         </>
       ) : (
         <>
-          <Stack.Screen name="Login" component={LogInScreen} />
+          <Stack.Screen name="Signup" component={LogInScreen} />
         </>
       )}
     </Stack.Navigator>
