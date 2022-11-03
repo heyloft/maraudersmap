@@ -49,15 +49,30 @@ const LogInScreen = () => {
   };
   return (
     <View style={styles.container}>
+      <View style={{ marginBottom: 110 }}>
+        <Text style={styles.header}>Welcome to Cyber Quest 🔎 </Text>
+        <Text style={styles.subheader}>
+          Virtual journeys in physical realities
+        </Text>
+        <Text style={styles.subheader}>
+          Virtual quests in physical realities
+        </Text>
+      </View>
+      <View>
+        <Text>What is your name, mysterious traveller?</Text>
+      </View>
       <View style={styles.containerChild}>
         <TextInput
           style={styles.loginUsernameInput}
-          label="Username"
+          label="name"
           value={usernameInput}
           autoCapitalize="none"
           autoCorrect={false}
           onChangeText={(text) => setUsernameInput(text)}
         />
+      </View>
+      <View>
+        <Text>Choose a unique name to start your journey </Text>
       </View>
       <Button
         mode="contained"
@@ -66,7 +81,7 @@ const LogInScreen = () => {
         icon={"login"}
         disabled={!usernameIsValid(usernameInput)}
       >
-        <Text style={styles.loginButtonText}>Log in</Text>
+        <Text style={styles.loginButtonText}>Sign up</Text>
       </Button>
     </View>
   );
@@ -81,7 +96,8 @@ const styles = StyleSheet.create({
     height: "100%",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    marginTop: 100,
+    marginBottom: 200,
   },
   containerChild: {
     height: 70,
@@ -97,5 +113,13 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     fontSize: 14,
+  },
+  header: {
+    fontSize: 29,
+    marginBottom: 50,
+  },
+  subheader: {
+    fontSize: 20,
+    textAlign: "center",
   },
 });
