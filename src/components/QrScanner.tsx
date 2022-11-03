@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Button,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
+import { Text, View, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import { Provider } from "react-native-paper";
+import { Provider, Button as PaperButton } from "react-native-paper";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { currentUserState, questsDirtyState } from "../recoil/atom";
 import { useMutation } from "react-query";
@@ -81,10 +74,15 @@ export default function QrScanner() {
             />
             {scanned && (
               <View style={{ marginTop: 550 }}>
-                <Button
-                  title={"Tap to scan again"}
+                {/* Using button from react-native-paper to get background color on iOS */}
+                <PaperButton
+                  icon="reload"
+                  mode="contained"
+                  color="#1E88E5"
                   onPress={() => setScanned(false)}
-                />
+                >
+                  Scan again
+                </PaperButton>
               </View>
             )}
           </>
