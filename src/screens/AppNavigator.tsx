@@ -5,7 +5,13 @@ import { currentUserState } from "../recoil/atom";
 import LogInScreen from "./LogInScreen";
 import MainScreen from "./MainScreen";
 
-const Stack = createNativeStackNavigator();
+export type AppStackParamList = {
+  Main: undefined;
+  Signup: undefined;
+};
+
+const Stack = createNativeStackNavigator<AppStackParamList>();
+
 const AppScreen = () => {
   const user = useRecoilValue(currentUserState);
 
@@ -21,7 +27,7 @@ const AppScreen = () => {
         </>
       ) : (
         <>
-          <Stack.Screen name="Login" component={LogInScreen} />
+          <Stack.Screen name="Signup" component={LogInScreen} />
         </>
       )}
     </Stack.Navigator>

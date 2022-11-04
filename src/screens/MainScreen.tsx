@@ -36,15 +36,19 @@ import {
   registerUserToEvent,
 } from "../api/events";
 import WelcomeModal from "../components/WelcomeModal";
-import { Provider } from "react-native-paper";
+import { Portal, Provider } from "react-native-paper";
 import ProfileScreen from "./ProfileScreen";
 import { questsWithinUnlockRadius } from "../location/locationUnlock";
 import { locationSetup } from "../location/location";
-import { sendNotification } from "../notifications/notifications";
 import QuestCompletedModal from "../components/QuestCompletedModal";
 import { Alert } from "react-native";
+import { AppStackParamList } from "./AppNavigator";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { Quest } from "../client";
+import QuestUnlockedModal from "../components/QuestUnlockedModal";
 
-export type RootStackParamList = {
+export type TabStackParamList = {
   Map: undefined;
   Scanner: undefined;
   QuestNavigator: undefined;
@@ -52,12 +56,20 @@ export type RootStackParamList = {
   Profile: undefined;
 };
 
-const Tab = createBottomTabNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<TabStackParamList>();
 
-const MainScreen = () => {
+const MainScreen = ({
+  navigation,
+}: CompositeScreenProps<
+  NativeStackScreenProps<AppStackParamList, "Main">,
+  NativeStackScreenProps<TabStackParamList>
+>) => {
   const user = useRecoilValue(currentUserState);
   const isNewUser = useRecoilValue(isNewUserState);
   const [location, setLocation] = useRecoilState(currentLocationState);
+  const [locationUnlockedQuests, setLocationUnlockedQuests] = useState<Quest[]>(
+    []
+  );
 
   const [currentEvent, setCurrentEvent] = useRecoilState(currentEventState);
   const [userQuestsDirty, setUserQuestsDirty] =
@@ -76,6 +88,12 @@ const MainScreen = () => {
   // (which could cause things like multiple notifications)
   const [performingLocationUnlock, setPerformingLocationUnlock] =
     useState(false);
+
+  const [acceptQuestLoading, setAcceptQuestLoading] = useState(false);
+
+  const [recentlyAcceptedQuests, setRecentlyAcceptedQuests] = useState<Quest[]>(
+    []
+  );
 
   const { refetch: refetchActiveQuests } = useQuery<
     QuestParticipation[],
@@ -186,26 +204,7 @@ const MainScreen = () => {
         setPerformingLocationUnlock(false);
         return;
       }
-      Promise.all(
-        unlockedQuests.map((quest) => {
-          sendNotification(
-            "Quest Unlocked ✨",
-            `You unlocked '${quest.title}'`
-          );
-          return updateQuestParticipation(
-            user.id,
-            quest.id,
-            QuestStatus.ACTIVE
-          );
-        })
-      )
-        .then(() =>
-          getUserEventQuests(user.id, currentEvent.id, QuestStatus.ACTIVE)
-        )
-        .then(setActiveQuests)
-        .then(() => refetchUnstartedQuests())
-        .then(() => refetchActiveQuests())
-        .then(() => setPerformingLocationUnlock(false));
+      setLocationUnlockedQuests(unlockedQuests);
     }
   }, [location, unstartedQuests]);
 
@@ -224,9 +223,41 @@ const MainScreen = () => {
     );
   };
 
+  const onQuestReject = (quest: Quest) => {
+    setLocationUnlockedQuests(
+      (prev) => prev?.filter((q) => q.id !== quest.id) ?? null
+    );
+  };
+
+  const onQuestAccept = (quest: Quest) => {
+    if (!user || !currentEvent) return;
+    setAcceptQuestLoading(true);
+    updateQuestParticipation(user?.id, quest.id, QuestStatus.ACTIVE)
+      .then(() =>
+        getUserEventQuests(user.id, currentEvent.id, QuestStatus.ACTIVE)
+      )
+      .then(setActiveQuests)
+      .then(() => refetchUnstartedQuests())
+      .then(() => refetchActiveQuests())
+      .then(() => setPerformingLocationUnlock(false))
+      .then(() => onQuestReject(quest))
+      .then(() => setAcceptQuestLoading(false))
+      .then(() => setRecentlyAcceptedQuests((v) => [...v, quest]));
+  };
+
   return (
     <Provider>
-      <>
+      <Portal>
+        {locationUnlockedQuests.length > 0 &&
+          ((q) => (
+            <QuestUnlockedModal
+              key={q.id}
+              quest={q}
+              onReject={() => onQuestReject(q)}
+              onAccept={() => onQuestAccept(q)}
+              acceptLoading={acceptQuestLoading}
+            />
+          ))(locationUnlockedQuests[0])}
         {isNewUser && <WelcomeModal />}
         {newlyCompletedQuests &&
           newlyCompletedQuests.length > 0 &&
@@ -235,9 +266,13 @@ const MainScreen = () => {
               key={q.quest.id}
               quest={q.quest}
               onDismiss={() => dismissCompletedQuest(q)}
+              onNavigateToBag={() => {
+                dismissCompletedQuest(q);
+                navigation.navigate("Bag");
+              }}
             />
           ))(newlyCompletedQuests[0])}
-      </>
+      </Portal>
       <Tab.Navigator>
         <Tab.Screen
           name="Map"
@@ -263,8 +298,14 @@ const MainScreen = () => {
               />
             ),
             headerShown: false,
-            // tabBarBadge: 3,
+            tabBarBadge:
+              recentlyAcceptedQuests.length > 0
+                ? recentlyAcceptedQuests.length
+                : undefined,
             unmountOnBlur: true,
+          }}
+          listeners={{
+            tabPress: () => setRecentlyAcceptedQuests([]),
           }}
         />
         <Tab.Screen

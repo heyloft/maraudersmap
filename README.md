@@ -1,4 +1,4 @@
-# maraudersmap
+# Cyber Quest
 A magical map for experiences
 
 <a target="_blank" href="https://expo.dev/@heyloft-dev/maraudersmap?serviceType=classic&distribution=expo-go&release-channel=main"><img alt="Run in Expo Go" width=180 src="https://img.shields.io/badge/Run%20in%20Expo%20Go-217c53.svg?style=flat-square&logo=EXPO&labelColor=212121&logoColor=fff"></a>

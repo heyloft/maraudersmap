@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Button,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
+import { Text, View, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import { Provider } from "react-native-paper";
+import { Provider, Button as PaperButton } from "react-native-paper";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { currentUserState, questsDirtyState } from "../recoil/atom";
 import { useMutation } from "react-query";
@@ -30,11 +23,16 @@ export default function QrScanner() {
     });
   }, []);
 
+  const enumToReadableName = (s: string) =>
+    s.replace(/(\w)(\w*)/g, (_, g1, g2) => g1.toUpperCase() + g2.toLowerCase());
+
   const { mutate: itemOwnershipMutation } = useMutation(createItemOwnership, {
     onSuccess: (ownership) => {
       sendNotification(
-        "Item Unlocked 🥳",
-        `You have unlocked '${ownership.item.title}'`
+        `${enumToReadableName(
+          ownership.quest_item.item.item_type
+        )} Unlocked 🥳`,
+        `You have unlocked '${ownership.quest_item.item.title}'`
       );
       userQuestsDirty(true);
     },
@@ -47,7 +45,7 @@ export default function QrScanner() {
     setScanned(true);
     if (user) {
       getItemOwnerships(user.id).then((ownerships) => {
-        if (ownerships.map((o) => o.item.id).includes(data)) {
+        if (ownerships.map((o) => o.quest_item.id).includes(data)) {
           Alert.alert(
             "🎒 Already unlocked",
             "You already have this item in your bag"
@@ -57,7 +55,7 @@ export default function QrScanner() {
         itemOwnershipMutation({
           obtainedAt: new Date().toISOString(),
           userId: user.id,
-          itemID: data,
+          questItemID: data,
         });
       });
     }
@@ -81,10 +79,15 @@ export default function QrScanner() {
             />
             {scanned && (
               <View style={{ marginTop: 550 }}>
-                <Button
-                  title={"Tap to scan again"}
+                {/* Using button from react-native-paper to get background color on iOS */}
+                <PaperButton
+                  icon="reload"
+                  mode="contained"
+                  color="#1E88E5"
                   onPress={() => setScanned(false)}
-                />
+                >
+                  Scan again
+                </PaperButton>
               </View>
             )}
           </>

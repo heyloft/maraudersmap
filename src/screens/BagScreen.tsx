@@ -11,6 +11,7 @@ import { useRecoilValue } from "recoil";
 import { getItemOwnerships } from "../api/items";
 import { ItemOwnership, ItemType } from "../client";
 import ErrorAlert from "../components/ErrorAlert";
+import ItemCard from "../components/ItemCard";
 import { currentUserState } from "../recoil/atom";
 
 const BagScreen = () => {
@@ -22,18 +23,11 @@ const BagScreen = () => {
 
   const DATA = [
     {
-      title: "🔑 Keys",
-      data: data
-        ? data.filter(
-            (itemOwnership) => itemOwnership.item.item_type === ItemType.KEY
-          )
-        : [],
-    },
-    {
       title: "🎟️ Vouchers",
       data: data
         ? data.filter(
-            (itemOwnership) => itemOwnership.item.item_type === ItemType.VOUCHER
+            (itemOwnership) =>
+              itemOwnership.quest_item.item.item_type === ItemType.VOUCHER
           )
         : [],
     },
@@ -42,24 +36,11 @@ const BagScreen = () => {
       data: data
         ? data.filter(
             (itemOwnership) =>
-              itemOwnership.item.item_type === ItemType.COLLECTIBLE
+              itemOwnership.quest_item.item.item_type === ItemType.COLLECTIBLE
           )
         : [],
     },
   ].filter((s) => s.data.length > 0);
-
-  const Item = ({
-    title,
-    description,
-  }: {
-    title: string;
-    description: string | undefined;
-  }) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
-      {description && <Text style={styles.subtitle}>{description}</Text>}
-    </View>
-  );
 
   if (isLoading) {
     return (
@@ -86,9 +67,9 @@ const BagScreen = () => {
             sections={DATA}
             keyExtractor={(item, index) => item.id + index}
             renderItem={({ item }) => (
-              <Item
-                title={item.item.title}
-                description={item.item.description}
+              <ItemCard
+                title={item.quest_item.item.title}
+                description={item.quest_item.item.description}
               />
             )}
             renderSectionHeader={({ section: { title } }) => (

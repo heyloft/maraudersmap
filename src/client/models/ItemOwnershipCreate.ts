@@ -4,5 +4,5 @@
 
 export type ItemOwnershipCreate = {
   obtained_at: string;
-  item_id: string;
+  quest_item_id: string;
 };
