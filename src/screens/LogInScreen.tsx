@@ -100,7 +100,7 @@ const LogInScreen = () => {
           style={styles.loginButton}
           color={"#1E88E5"}
           icon={"login"}
-          disabled={!usernameIsValid(usernameInput)}
+          disabled={!usernameIsValid(usernameInput) || loading}
           loading={loading}
         >
           <Text style={styles.loginButtonText}>

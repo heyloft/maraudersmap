@@ -23,10 +23,15 @@ export default function QrScanner() {
     });
   }, []);
 
+  const enumToReadableName = (s: string) =>
+    s.replace(/(\w)(\w*)/g, (_, g1, g2) => g1.toUpperCase() + g2.toLowerCase());
+
   const { mutate: itemOwnershipMutation } = useMutation(createItemOwnership, {
     onSuccess: (ownership) => {
       sendNotification(
-        "Item Unlocked 🥳",
+        `${enumToReadableName(
+          ownership.quest_item.item.item_type
+        )} Unlocked 🥳`,
         `You have unlocked '${ownership.quest_item.item.title}'`
       );
       userQuestsDirty(true);
