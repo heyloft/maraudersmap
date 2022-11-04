@@ -91,6 +91,10 @@ const MainScreen = ({
 
   const [acceptQuestLoading, setAcceptQuestLoading] = useState(false);
 
+  const [recentlyAcceptedQuests, setRecentlyAcceptedQuests] = useState<Quest[]>(
+    []
+  );
+
   const { refetch: refetchActiveQuests } = useQuery<
     QuestParticipation[],
     Error
@@ -237,7 +241,8 @@ const MainScreen = ({
       .then(() => refetchActiveQuests())
       .then(() => setPerformingLocationUnlock(false))
       .then(() => onQuestReject(quest))
-      .then(() => setAcceptQuestLoading(false));
+      .then(() => setAcceptQuestLoading(false))
+      .then(() => setRecentlyAcceptedQuests((v) => [...v, quest]));
   };
 
   return (
@@ -293,8 +298,14 @@ const MainScreen = ({
               />
             ),
             headerShown: false,
-            // tabBarBadge: 3,
+            tabBarBadge:
+              recentlyAcceptedQuests.length > 0
+                ? recentlyAcceptedQuests.length
+                : undefined,
             unmountOnBlur: true,
+          }}
+          listeners={{
+            tabPress: () => setRecentlyAcceptedQuests([]),
           }}
         />
         <Tab.Screen
