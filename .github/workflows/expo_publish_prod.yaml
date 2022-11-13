@@ -27,10 +27,8 @@ jobs:
       - name: 📦 Install dependencies
         run: yarn install
 
-      - name: 🌍 Decode .env from base64 secret
-        env:
-          ENV_FILE_BASE64: ${{ secrets.ENV_FILE_BASE64_PROD }}
-        run: echo $ENV_FILE_BASE64 | base64 --decode > .env
+      - name: 🌍 Use environment variables from .env.prod
+        run: cp .env.prod .env
 
       - name: 🚀 Publish app
         run: expo publish --release-channel production --non-interactive
