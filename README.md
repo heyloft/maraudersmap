@@ -99,7 +99,7 @@ Publishing is performed automatically with GitHub Actions when the `main` and `p
 
 GitHub Actions uses environment variables from `.env.dev` (for `main` branch and PR previews) and `.env.prod` (for `production` branch).
 
-Github Actions is authorized to publish to [expo.dev](https://expo.dev/) via the `EXPO_TOKEN` repository secret.
+Github Actions is authorized to publish to [expo.dev](https://expo.dev/) via the `EXPO_TOKEN` repository secret. Learn about Expo Access Tokens [here](https://docs.expo.dev/accounts/programmatic-access/), and check current Access Tokens for the `heyloft-dev` organization [here](https://expo.dev/accounts/heyloft-dev/settings/access-tokens) (requires login).
 
 #### Manually
 > Manual publishing uses environment variables from `.env`
