@@ -8,13 +8,14 @@
 
 ## 💻 Development
 ### 🔡 Environment variables
-Create your own local `.env` file for holding environment variables. It must be placed in the root directory. You can use `base.env` as a template.
+Create your own local `.env` file for holding environment variables. It must be placed in the root directory. You can use [`.env.template`](.env.template) as a starting point.
 ```
-cp base.env .env
+cp .env.template .env
 ```
+> `.env.dev` and `.env.prod` are used by GitHub Actions, see [Publishing app](#📤-publishing-app).
 
 ### 🔌 Local backend connection
-The backend url (`BASE_URL`) provided in `base.env` points to a deployed "development" version of the backend based on the `main` branch. During development, you might want to point to a local backend instead:
+The backend url (`BASE_URL`) provided in `.env.template` points to a deployed "development" version of the backend based on the `main` branch. During development, you might want to point to a local backend instead:
 1. You first need the LAN IP address of your computer. There are many ways to find this address, and it depends on the operating system you are using.
 
     On **Linux and macOS**, the following should print the address
@@ -89,23 +90,19 @@ Environment variables retrieved from `.env` when starting the dev server seem to
 2. Run `yarn start -c`
     > the `-c` flag tells Expo to clear the bundler cache
 
-### 🤖 Updating `.env` for GitHub Actions
-In order to use a `.env` file inside GitHub Actions, we store the `.env` file as a base64 encoded string in a repository secret (`ENV_FILE_BASE64_DEV` and `ENV_FILE_BASE64_PROD`). 
-
-Encoding is performed locally with the following command
-```
-openssl base64 -A -in .env
-``` 
-
 ## 📤 Publishing app
 
 > This utilizes the legacy Expo service [Classic Updates](https://docs.expo.dev/archive/classic-updates/introduction/)
+
 #### Github Actions
 Publishing is performed automatically with GitHub Actions when the `main` and `production` branches are updated. These versions are published to the [`dev`](https://expo.dev/@heyloft-dev/maraudersmap?serviceType=classic&distribution=expo-go&release-channel=dev) and [`production`](https://expo.dev/@heyloft-dev/maraudersmap?serviceType=classic&distribution=expo-go&release-channel=production) channels respectively on [expo.dev](https://expo.dev/). Similarly, PR preview versions are published for each new pull request (in channel `pr-{prNumber}`).
 
-Github Actions is authorized to publish to [expo.dev](https://expo.dev/) via the `EXPO_TOKEN` secret.
+GitHub Actions uses environment variables from `.env.dev` (for `main` branch and PR previews) and `.env.prod` (for `production` branch).
+
+Github Actions is authorized to publish to [expo.dev](https://expo.dev/) via the `EXPO_TOKEN` repository secret. Learn about Expo Access Tokens [here](https://docs.expo.dev/accounts/programmatic-access/), and check current Access Tokens for the `heyloft-dev` organization [here](https://expo.dev/accounts/heyloft-dev/settings/access-tokens) (requires login).
 
 #### Manually
+> Manual publishing uses environment variables from `.env`
 1. Login to Expo account
     ```
     expo login
