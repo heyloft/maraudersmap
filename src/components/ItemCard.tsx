@@ -15,9 +15,6 @@ const ItemCard = ({
 );
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
   item: {
     backgroundColor: "#fff",
     padding: 20,

@@ -109,6 +109,7 @@ const MainScreen = ({
     }
   );
 
+  // Keep list of quest items for active quests up to date
   useQuery<QuestItem[] | null, Error>(
     ["questItems", activeQuests],
     async () => {
@@ -166,7 +167,7 @@ const MainScreen = ({
     return unstartedQuests;
   });
 
-  // TODO: Fetching first event for now, should be changed later
+  // TODO: Fetching first event for now, should be changed once multiple events are supported
   useEffect(() => {
     getOneEvent().then((evnt) => {
       if (evnt && user) {
@@ -193,6 +194,7 @@ const MainScreen = ({
     }
   }, []);
 
+  // Attempt location unlock on location or quest list change
   useEffect(() => {
     if (unstartedQuests && user && currentEvent && !performingLocationUnlock) {
       setPerformingLocationUnlock(true);
@@ -208,6 +210,7 @@ const MainScreen = ({
     }
   }, [location, unstartedQuests]);
 
+  // Refetch quests if list is considered "dirty"
   useEffect(() => {
     if (userQuestsDirty) {
       setUserQuestsDirty(false);

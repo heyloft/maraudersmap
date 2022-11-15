@@ -16,7 +16,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
 
-      - name: "🤪 Install dependencies"
+      - name: "📦 Install dependencies"
         run: "yarn install"
 
       - name: "🤓 Run ESLint"

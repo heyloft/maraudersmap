@@ -15,7 +15,7 @@ export default function QrScanner() {
   const [scanned, setScanned] = useState<boolean>(false);
 
   const user = useRecoilValue(currentUserState);
-  const userQuestsDirty = useSetRecoilState(questsDirtyState);
+  const setUserQuestsDirty = useSetRecoilState(questsDirtyState);
 
   useEffect(() => {
     BarCodeScanner.requestPermissionsAsync().then(({ status }) => {
@@ -34,7 +34,8 @@ export default function QrScanner() {
         )} Unlocked 🥳`,
         `You have unlocked '${ownership.quest_item.item.title}'`
       );
-      userQuestsDirty(true);
+      // Mark user quests list as "dirty" to force a refetch
+      setUserQuestsDirty(true);
     },
     onError: () => {
       Alert.alert("😐️ Oops ", "Something went wrong...");

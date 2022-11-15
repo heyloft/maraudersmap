@@ -4,6 +4,13 @@ import { Quest } from "../client";
 
 const defaultUnlockRadiusMeters = 5;
 
+/**
+ * Returns quests within a given radius with respect to a given location
+ * @param location
+ * @param quests
+ * @param radiusMeters
+ * @returns quests within radius of location
+ */
 export const questsWithinUnlockRadius = (
   location: LocationObjectCoords,
   quests: Quest[],
