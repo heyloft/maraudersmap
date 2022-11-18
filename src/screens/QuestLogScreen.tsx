@@ -50,7 +50,7 @@ const QuestLogScreen = ({
     }
   }, [activeQuests]);
 
-  const DATA: { title: string; data: QuestParticipation[] }[] = [
+  const questsListData: { title: string; data: QuestParticipation[] }[] = [
     {
       title: "✨ Active Quests",
       data: activeQuests ?? [],
@@ -89,7 +89,7 @@ const QuestLogScreen = ({
       ) : (
         <View style={styles.container}>
           <SectionList
-            sections={DATA}
+            sections={questsListData}
             keyExtractor={(qp) => `${qp.quest.id}:${qp.user.id}`}
             renderItem={({ item: qp }) => (
               <Pressable

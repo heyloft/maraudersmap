@@ -27,9 +27,10 @@ export const getUserQuestProgress = (
       (qi) => qi.item.item_type == ItemType.KEY
     );
     return getItemOwnerships(user_id).then((userItems: ItemOwnership[]) => {
-      // TODO: Check which quest item is from
       const userKeys = userItems.filter(
-        (ui) => ui.quest_item.item.item_type == ItemType.KEY
+        (ui) =>
+          ui.quest_item.item.item_type == ItemType.KEY &&
+          ui.quest_item.quest_id === quest_id
       );
       return {
         total: questKeys.length,

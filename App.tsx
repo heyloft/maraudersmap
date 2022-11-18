@@ -13,6 +13,7 @@ const queryClient = new QueryClient();
 
 export default function App() {
   useEffect(() => {
+    // Specify backend url to be used in API client
     OpenAPI.BASE = BASE_URL;
     notificationSetup().then((error) => {
       if (error) {
