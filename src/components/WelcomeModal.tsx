@@ -21,7 +21,6 @@ const WelcomeModal = () => {
         <Text style={{ fontSize: 26, textAlign: "center", fontWeight: "bold" }}>
           Cyber Quest
         </Text>
-        {/* <Text style={{ fontSize: 27, marginTop: 25 }}></Text> */}
         <Text style={{ fontSize: 18, textAlign: "center", marginTop: 25 }}>
           Despite being inside, you feel a soft wind.
         </Text>

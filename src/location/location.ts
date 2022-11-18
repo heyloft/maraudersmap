@@ -50,7 +50,7 @@ export const locationSetup = async (
     return false;
   }
   watchPositionAsync(
-    { accuracy: Accuracy.Highest, distanceInterval: 2 }, // TODO: Check best parameters for options.
+    { accuracy: Accuracy.Highest, distanceInterval: 2 },
     onLocationUpdate
   );
   return true;

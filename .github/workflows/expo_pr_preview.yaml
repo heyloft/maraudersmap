@@ -16,7 +16,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
 
-      - name: "🤪 Install dependencies"
+      - name: "📦 Install dependencies"
         run: "yarn install"
 
       - name: "🤓 Run ESLint"
@@ -53,10 +53,8 @@ jobs:
       - name: 📦 Install dependencies
         run: yarn install
 
-      - name: 🌍 Decode .env from base64 secret
-        env:
-          ENV_FILE_BASE64: ${{ secrets.ENV_FILE_BASE64_DEV }}
-        run: echo $ENV_FILE_BASE64 | base64 --decode > .env
+      - name: 🌍 Use environment variables from .env.dev
+        run: cp .env.dev .env
 
       - name: 🚀 Publish preview
         run: expo publish --release-channel=pr-${{ github.event.number }} --non-interactive

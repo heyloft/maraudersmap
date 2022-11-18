@@ -1,5 +1,6 @@
 import { DefaultService as API } from "../client";
 
+// Should only be used for testing where a single event is assumed
 export const getOneEvent = () => API.readEvents().then((events) => events[0]);
 
 export const registerUserToEvent = (userId: string, eventId: string) => {
